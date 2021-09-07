@@ -1,0 +1,40 @@
+h1, h2{
+    font-family: 'Oswald',Times;
+    color: darkblue;
+}
+body{
+    color: darkblue;
+    margin: 10px 50px 10px 50px;
+    width: 950px;
+    background-color: ivory;
+    font-family: 'Open Sans';
+}
+img{
+    float:left;
+    margin: 10px;
+}
+
+li{
+    display: inline;
+    margin: 49px;
+    padding: 10px;
+}
+
+.left{
+    float: left;
+    width: 300px;
+    padding: 1em;
+}
+
+.center{
+    margin-left: 340px;
+    margin-right: 340px;
+    width: 300px;
+    padding: 1em;
+}
+
+.right{
+    float: right;
+    width: 300px;
+    padding: 1em;
+}
