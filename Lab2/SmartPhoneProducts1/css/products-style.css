@@ -1,24 +1,35 @@
+/* General */  
 body{
     width: 800px;
     margin: 0 auto;
+    border: 5px solid black;
+    display: inline-block;
 }
 
+/* Styling the products */
 img{
     width: 200px;
     height: 200px;
 }
 
+/* Typography */  
 h1,h2{
     text-align: center;
 }
 
+/*  Form styling */
 main{
-    display: flex;
+    display: inline-flex;
     flex-flow: row wrap;
     justify-content: space-around;
+    background-image: url(./phone-globe.jpg);
+    background-repeat: no-repeat;
+    background-position: center;
 }
 
+/* block styling */
 div{
-    border: 5px solid black;
+    border-top: 5px solid black;
+    border-bottom: 5px solid black;
     display: flex;
 }
