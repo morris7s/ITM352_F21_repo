@@ -25,6 +25,8 @@ main{
     background-image: url(./phone-globe.jpg);
     background-repeat: no-repeat;
     background-position: center;
+    padding-left: 30px;
+    padding-right: 30px;
 }
 
 /* block styling */
