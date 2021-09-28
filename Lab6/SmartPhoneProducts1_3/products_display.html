@@ -32,31 +32,31 @@
 <div>
     <main>
 
-    <section class="item" onmouseover="this.className='item rotate'; spins_span.innerHTML = spins++; hit_spin_span.innerHTML = hits_span.innerHTML/spins_span.innerHTML;" onclick="this.className='item'; hits_span.innerHTML = ++hits; hit_spin_span.innerHTML = hits_span.innerHTML/spins_span.innerHTML">
+    <section class="item" onmouseover="this.className='item rotate'; spins_span.innerHTML = ++spins; hit_spin_span.innerHTML = hits_span.innerHTML/spins_span.innerHTML;" onclick="this.className='item'; hits_span.innerHTML = hits++; hit_spin_span.innerHTML = hits_span.innerHTML/spins_span.innerHTML">
         <h2>HTC</h2>
         <p>&dollar;40.00</p>
         <img src="http://dport96.github.io/ITM352/morea/080.flow-control-II/HTC.jpg">
     </section>
 
-    <section class="item" onmouseover="this.className='item rotate';spins_span.innerHTML = spins++"; onclick="this.className='item';hits_span.innerHTML=hits++;">
+    <section class="item" onmouseover="this.className='item rotate';spins_span.innerHTML = ++spins"; onclick="this.className='item';hits_span.innerHTML=++hits;">
         <h2>Apple</h2>
         <p>&dollar;75.00</p>
         <img src="http://dport96.github.io/ITM352/morea/080.flow-control-II/iphone-3gs.jpg">
     </section>
 
-    <section class="item" onmouseover="this.className='item rotate';spins_span.innerHTML = spins++"; onclick="this.className='item';hits_span.innerHTML=hits++;">
+    <section class="item" onmouseover="this.className='item rotate';spins_span.innerHTML = ++spins"; onclick="this.className='item';hits_span.innerHTML=++hits;">
         <h2>Nokia</h2>
         <p>&dollar;35.00</p>
         <img src="http://dport96.github.io/ITM352/morea/080.flow-control-II/Nokia.jpg">
     </section>
 
-    <section class="item" onmouseover="this.className='item rotate';spins_span.innerHTML = spins++"; onclick="this.className='item';hits_span.innerHTML=hits++;">
+    <section class="item" onmouseover="this.className='item rotate';spins_span.innerHTML = ++spins"; onclick="this.className='item';hits_span.innerHTML=++hits;">
         <h2>Samsung</h2>
         <p>&dollar;45.00</p>
         <img src="http://dport96.github.io/ITM352/morea/080.flow-control-II/Samsung.jpg">
     </section>
 
-    <section class="item" onmouseover="this.className='item rotate';spins_span.innerHTML = spins++"; onclick="this.className='item';hits_span.innerHTML=++hits;">
+    <section class="item" onmouseover="this.className='item rotate';spins_span.innerHTML = ++spins"; onclick="this.className='item';hits_span.innerHTML=++hits;">
         <h2>Blackberry</h2>
         <p>&dollar;10.00</p>
         <img src="http://dport96.github.io/ITM352/morea/080.flow-control-II/Blackberry.jpg">
@@ -72,9 +72,19 @@
 </main>
 </div>
 <footer>
-<h1>
+    <script> 
+    var line = 1
+    var now = new Date()
+    document.write(`
+        <table border="1" style="margin-left: auto; margin-right: auto; text-align: center;">
+        <tr><th colspan="2"><h1>Your One Stop For Used Phones - ${[first_name + '.']  +[last_name + '.']}'s</h1></th></tr>
+        <tr><td>${line.innerHTML=line + '.'}</td><td><br />Copyright @ ${first_name + ' ' + last_name} </td></tr>
+        <tr><td>${line.innerHTML=++line + '.'}</td><td>${now.innerHTML = now.getFullYear()}</td></tr>
+        <tr><td>${line.innerHTML=++line + '.'}</td><td>${now.innerHTML = [(now.getHours() +11) % 12 + 1] + ':' + [now.getMinutes()] + ' ' + [(now.getHours()< 12)?'AM':'PM']}</td></tr>
+        </table>
+    `)
+    </script>
     
-    Your One Stop Phone Shop -<script> document.write(store_name)</script></h1>
 </footer>
 </body>
 </html>
@@ -82,6 +92,7 @@
     
     var hits = 0;
     var spins = 0;
-    hits_span.innerHTML = hits;
-    spins_span.innerHTML = spins;
+    hits_span.innerHTML = hits.toFixed(2);
+    spins_span.innerHTML = spins.toFixed(2);
+    // Your One Stop Phone Shop -<script> document.write(store_name)</script>
 </script>
