@@ -1,0 +1,47 @@
+<script>
+        // Product Data
+        var product_quantities = [1,2,3,2,1];
+
+// array of all products
+// corresponds to product_quantities array
+// product_quantities[i] is the quantity for products[i]
+products = [
+{ 'name': 'small gumball', 'price': 0.02 },
+{ 'name': 'medium gumball', 'price': 0.05 },
+{ 'name': 'large gumball', 'price': 0.07 },
+{ 'name': 'small jawbreaker', 'price': 0.06 },
+{ 'name': 'large jawbreaker', 'price': 0.10 }
+];
+
+document.write(`
+<table style="border: 1px solid black;text-align: center;">
+<tbody><tr style="border: 1px solid black;"><th style="border: 1px solid black;">Product #</th><th>Quantity</th></tr>
+`);
+for(let prodObj in products) {
+    document.write(`
+<tr style="border: 1px solid black;"><td style="border: 1px solid black;">${i+1}</td><td>${product_quantities[i]}</td></tr>
+   ` )
+};
+
+document.write(`
+</tbody></table>
+`);
+
+document.write(product_quantities[20]);
+
+</script>
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+</html>
