@@ -1,35 +1,23 @@
+
 <script>
 /* This file is used to creates and display a reciept */
 
     // Product Data
     var product_quantities = [1,2,3,2,1];
 
-    // array of all products
-// corresponds to product_quantities array
-// product_quantities[i] is the quantity for products[i]
-products = [
- { 'name': 'small gumball', 'price': 0.02 },
- { 'name': 'medium gumball', 'price': 0.05 },
- { 'name': 'large gumball', 'price': 0.07 },
- { 'name': 'small jawbreaker', 'price': 0.06 },
- { 'name': 'large jawbreaker', 'price': 0.10 }
-];
-
     document.write(`
     <table style="border: 1px solid black;text-align: center;">
-    <tbody><tr style="border: 1px solid black;"><th style="border: 1px solid black;">Product #</th><th>Quantity</th></tr>
+    <tbody><tr style="border: 1px solid black;"><th style="border: 1px solid black;">Product Name</th><th>Price</th></tr>
     `);
-    for(let prodObj in products) {
+    for(let i in product_quantities) {
         document.write(`
     <tr style="border: 1px solid black;"><td style="border: 1px solid black;">${i+1}</td><td>${product_quantities[i]}</td></tr>
-       ` )
-    };
-
-    document.write(`
-    </tbody></table>
-    `);
+        `);
+    }
+    document.write(`</tbody></table>`);
 
     document.write(product_quantities[20]);
+
 
     // Product 1
     var item1 = 'Big Mac';
@@ -111,7 +99,7 @@ products = [
                 // prduct row 1
                 document.write(`
         <tr> 
-            <td width="43%">${product1[item]}</td>
+            <td width="43%">${item1}</td>
             <td align="center" width="11%">${product1.quantity}</td>
             <td width="13%">\$${product1.price}</td>
             <td width="54%">\$${extended_price1}</td>

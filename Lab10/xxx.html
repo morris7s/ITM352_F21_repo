@@ -6,29 +6,27 @@
 // corresponds to product_quantities array
 // product_quantities[i] is the quantity for products[i]
 products = [
-{ 'name': 'small gumball', 'price': 0.02 },
-{ 'name': 'medium gumball', 'price': 0.05 },
-{ 'name': 'large gumball', 'price': 0.07 },
-{ 'name': 'small jawbreaker', 'price': 0.06 },
-{ 'name': 'large jawbreaker', 'price': 0.10 }
+{ 'name': 'small gumball', 'price': 0.02, 'extended_costs': 0.65 },
+{ 'name': 'medium gumball', 'price': 0.05, 'extended_costs': 0.78  },
+{ 'name': 'large gumball', 'price': 0.07, 'extended_costs': 0.32},
+{ 'name': 'small jawbreaker', 'price': 0.06, 'extended_costs': 0.74 },
+{ 'name': 'large jawbreaker', 'price': 0.10, 'extended_costs': 0.29 }
 ];
 
-document.write(`
-<table style="border: 1px solid black;text-align: center;">
-<tbody><tr style="border: 1px solid black;"><th style="border: 1px solid black;">Product #</th><th>Quantity</th></tr>
-`);
-for(let prodObj in products) {
     document.write(`
-<tr style="border: 1px solid black;"><td style="border: 1px solid black;">${i+1}</td><td>${product_quantities[i]}</td></tr>
-   ` )
-};
+    <table style="border: 1px solid black; text-align: center;" onclick="
+    this.appendChild(document.createElement('tr'));
+    ">
+<tbody><tr style="border: 1pxsolid black;"><th style="border: 1px solid black;">Product Name</th><th>Price</th><th style="border: 1px solid black;">Extended Costs</th></tr>
+    `);
+    for(let prodObj of products) {
+        document.write(`
+        <tr style="border: 1px solid black;"><td style="border: 1px solid black;">${prodObj.name}</td><td>${prodObj.price}</td><td style="border: 1px solid black;">${prodObj.extended_costs}</td></tr>
+        `);
+    }
+    document.write(`</tbody></table>`)
 
-document.write(`
-</tbody></table>
-`);
-
-document.write(product_quantities[20]);
-
+    console.log(product_quantities)
 </script>
 
 
