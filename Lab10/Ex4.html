@@ -1,0 +1,73 @@
+<style>
+    td {
+        border: 1px solid black;
+    }
+
+    tr {
+        border: 1px solid black;
+    }
+    tr:hover {background-color: yellow;};
+</style>
+
+<table id="testtable" ; style="border: 1px solid black; text-align: center;" onclick="
+    new_row = this.appendChild(document.createElement('tr'));
+    for(i=1; i <= this.rows[0].cells.length; i++) {
+    new_cell = new_row.appendChild(document.createElement('td'));
+    new_cell.innerHTML = 'xxx';
+    }
+    ">
+    <tbody id="prodtablebody">
+        <tr style="border: 1pxsolid black;">
+            <th style="border: 1px solid black;">Product Name</th>
+            <th style="border: 1px solid black;">Price</th>
+            <th style="border: 1px solid black;">Extended Costs</th>
+        </tr>
+
+        <script>
+            // Product Data
+            var product_quantities = [1, 2, 3, 2, 1];
+
+            // array of all products
+            // corresponds to product_quantities array
+            // product_quantities[i] is the quantity for products[i]
+            products = [
+                { 'name': 'small gumball', 'price': 0.02, 'extended_costs': 0.65 },
+                { 'name': 'medium gumball', 'price': 0.05, 'extended_costs': 0.78 },
+                { 'name': 'large gumball', 'price': 0.07, 'extended_costs': 0.32 },
+                { 'name': 'small jawbreaker', 'price': 0.06, 'extended_costs': 0.74 },
+                { 'name': 'large jawbreaker', 'price': 0.10, 'extended_costs': 0.29 }
+            ];
+
+
+            for (let i in products) {
+                document.write(`
+        <tr><td>${products[i].name}</td><td>${products[i].price}</td><td>${products[i].extended_costs}</td></tr>
+        `);
+            }
+            console.log(product_quantities)
+        </script>
+
+    </tbody>
+</table>
+<input type="button" value="Delete Last Row" 
+    onclick = "
+        prodtablebody.deleteRow(prodtablebody.rows.length - 1);
+    "
+>
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Morris Table</title>
+</head>
+
+<body>
+
+</body>
+
+</html>
