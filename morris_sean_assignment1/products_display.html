@@ -1,0 +1,93 @@
+<script src="./products.json"></script>
+<script>
+    var products = [
+        {
+            "name": "Yeezy Slides 'Pure'",
+            "price": 149.00,
+            "image": "./images/yeezyslidespure.jpeg",
+            "quantity_available": 7
+        },
+        {
+            "name": "Air Force 1 'Supreme White'",
+            "price": 139.00,
+            "image": "./images/airforce1boxlogo.jpeg",
+            "quantity_available": 6
+        },
+        {
+            "name": "Air Jordan 1 Retro High 'Chicago'",
+            "price": 1499.00,
+            "image": "./images/airjordan1chicago.jpeg",
+            "quantity_available": 2
+        },
+        {
+            "name": "Air jordan 1 Retro High 'Origin Story'",
+            "price": 349.00,
+            "image": "./images/airjordan1originstory.jpeg",
+            "quantity_available": 5
+        },
+        {
+            "name": "Bapesta Low 'Black Shark Face'",
+            "price": 749.00,
+            "image": "./images/bapestalow.jpeg",
+            "quantity_available": 3
+        },
+        {
+            "name": "Yeezy 450 'Cloud White'",
+            "price": 289.00,
+            "image": "./images/yeezy450.jpeg",
+            "quantity_available": 3
+        }
+    ];
+</script>
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>SEANS SHOES</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Cherry+Swash|Raleway" rel="stylesheet">
+
+    <link href="products-style.css" rel="stylesheet">
+
+
+</head>
+
+<body>
+
+    <header>
+        <h1>Sean's Shoe Store</h1>
+    </header>
+    <div>
+        <aside>
+            <div style="font-size:4rem;text-align:center;font-weight: bold;font-style: italic; color: white">
+                We sell from
+                around the globe!
+            </div>
+        </aside>
+        <form action="./invoice.html" method="GET">
+            <main>
+                <script>
+                    for (i = 0; i < products.length; i++) {
+                        document.write(`<section class="item">
+                        <h2>${products[i].name}</h2>
+                        <p>$${products[i].price}</p>
+                        <label>How many?</label>
+                        <input type="text" placeholder=0 name="quantity${i}">
+                        <img src=${products[i].image}>
+                        </section>`
+                        )
+                    }
+                </script>
+            </main>
+    </div>
+    <input type="submit" value="Order">
+    </form>
+    <footer>
+        <h1>
+            Your One Stop For Used Phones
+        </h1>
+    </footer>
+</body>
+
+</html>
