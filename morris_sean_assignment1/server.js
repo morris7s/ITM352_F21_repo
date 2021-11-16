@@ -13,14 +13,22 @@ app.all('*', function (request, response, next) {
 
 // process purchase request (validate quantities, check quantity available)
 // First thing I must do is validate data coming in from POST requests
+app.post('/purchase', function (request, response, next) {
 
+})
 
 // route all other GET requests to files in public 
 app.use(express.static('./public'));
+app.get("/products.json", function (request, response, next) {
+   response.type('.js');
+   var products_str = `var products = ${JSON.stringify(products)};`;
+   response.send(products_str);
+});
 
 // start server
 app.listen(8080, () => console.log(`listening on port 8080`));
 
+// Functions 
 // Will use NonNegInt as a way to check whether quantities entered are valid (copied from labs)
 function isNonNegInt(q, returnErrors = false) {
    // checks if a string 'q' is a non-neg integer. If returnErrors is true, the array of errors is returned

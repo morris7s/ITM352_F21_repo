@@ -31,14 +31,14 @@
         <form action="./purchase" method="POST">
             <main>
                 <script>
-                    for (i = 0; i < products.length; i++) {
+                    for (i = 0; i < products_array.length; i++) {
                         document.write(`<section class="item">
-                        <h2>${products[i].name}</h2>
-                        <p>$${products[i].price}</p>
+                        <h2>${products_array[i].name}</h2>
+                        <p>$${products_array[i].price}</p>
                         <label>How many?</label>
                         <input type="text" placeholder=0 name="quantity${i}">
                         <span id='qty_textbox_message'>Enter a quantity</span>
-                        <img src=${products[i].image}>
+                        <img src=${products_array[i].image}>
                         </section>`
                         )
                     }
