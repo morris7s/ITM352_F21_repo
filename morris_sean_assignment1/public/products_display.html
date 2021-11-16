@@ -1,7 +1,5 @@
-<script src="./products.json"></script>
-<script>
-    var products = "./"
-</script>
+<script src="./products.js"></script>
+
 <!DOCTYPE html>
 <html>
 
@@ -36,7 +34,7 @@
                         <h2>${products_array[i].name}</h2>
                         <p>$${products_array[i].price}</p>
                         <label>How many?</label>
-                        <input type="text" placeholder=0 name="quantity${i}">
+                        <input type="text" placeholder="${products_array[i].quantity_available} available" name="quantity${i}">
                         <span id='qty_textbox_message'>Enter a quantity</span>
                         <img src=${products_array[i].image}>
                         </section>`
@@ -44,10 +42,7 @@
                     }
                 </script>
 
-                <div>
-                    <h2>${products[i].name}</h2>
-                    <p>$${products[i].price}</p>
-                </div>
+
             </main>
     </div>
     <input type="submit" value="Order">

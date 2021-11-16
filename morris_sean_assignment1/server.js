@@ -2,6 +2,7 @@ var products_array = require('./products.json');
 
 var express = require('express');
 var app = express();
+const qs = require('querystring');
 
 // Routing 
 
@@ -13,15 +14,37 @@ app.all('*', function (request, response, next) {
 
 // process purchase request (validate quantities, check quantity available)
 // First thing I must do is validate data coming in from POST requests
-app.post('/purchase', function (request, response, next) {
+app.use(express.urlencoded({"extended": true}));
 
+app.post('/purchase', function (request, response, next) {
+   // check if the quantites are valid
+   // loop through all products to find any errors
+   var errors = {};
+   for(i in products_array) {
+      // check if nonnegint
+
+      // checkif quantity wanted is avalable
+
+      // check if at least 1 quantity 
+
+   }
+
+   var qstring = qs.stringify(request.body);
+   // if no errors, send to invoivce.html with quanity data in querystring, otherwsie back to products_display.html
+   if(Object.keys(errors).length == 0) {
+       response.redirect('./invoice.html?'+qstring);
+   } else {
+      response.redirect('./products_display.html?'+qstring);
+   }
+  
 })
 
 // route all other GET requests to files in public 
 app.use(express.static('./public'));
-app.get("/products.json", function (request, response, next) {
+
+app.get("/products.js", function (request, response, next) {
    response.type('.js');
-   var products_str = `var products = ${JSON.stringify(products)};`;
+   var products_str = `var products_array = ${JSON.stringify(products_array)};`;
    response.send(products_str);
 });
 
