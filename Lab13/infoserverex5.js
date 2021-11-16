@@ -1,24 +1,39 @@
 var express = require('express');
 var app = express();
 
-app.use(express.urlencoded({ extended: true }));
-
-app.post('/process_form', function (request, response, next) {
-    console.log(request.body);
-    var q = request.body['quantity_textbox'];
-    if (typeof q != 'undefined') {
-        if(isNonNegInt(q)) {
-        response.send(`Thank you for purchasing ${q} things!`);
-    } else{
-        response.send(`Error: ${q} is not a quantity. Go back and fix it`)
-    }
-
-}
+app.all('*', function (request, response, next) {
+    console.log(request.method + ' to path ' + request.path + ' query string ' + JSON.stringify(request.query));
     next();
 });
 
-app.all('*', function (request, response, next) {
-    console.log(request.method + ' to path ' + request.path + ' query string ' + JSON.stringify(request.query));
+app.use(express.urlencoded({ extended: true }));
+
+
+var products = require('./products_data.json');
+products.forEach((prod, i) => { prod.total_sold = 0 });
+
+app.get("/products_data.js", function (request, response, next) {
+    response.type('.js');
+    var products_str = `var products = ${JSON.stringify(products)};`;
+    response.send(products_str);
+});
+
+app.post('/process_form', function (request, response, next) {
+    let name = products[0]['name'];
+    let name_price = products[0]['price'];
+    console.log(request.body);
+    var q = request.body['quantity_textbox'];
+    if (typeof q != 'undefined') {
+        if (isNonNegInt(q)) {
+            products[0].total_sold += Number(q);
+            response.redirect('./order_page.html?quantity=' + q);
+        } else {
+            response.redirect('./order_page.html??error=Invalid%20Quantity&quantity_textbox=' + q);
+        }
+    } else {
+        response.send(`Hey! You need to pick some stuff!`)
+    }
+
     next();
 });
 
