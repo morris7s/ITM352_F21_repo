@@ -1,43 +1,6 @@
 <script src="./products.json"></script>
 <script>
-    var products = [
-        {
-            "name": "Yeezy Slides 'Pure'",
-            "price": 149.00,
-            "image": "./images/yeezyslidespure.jpeg",
-            "quantity_available": 7
-        },
-        {
-            "name": "Air Force 1 'Supreme White'",
-            "price": 139.00,
-            "image": "./images/airforce1boxlogo.jpeg",
-            "quantity_available": 6
-        },
-        {
-            "name": "Air Jordan 1 Retro High 'Chicago'",
-            "price": 1499.00,
-            "image": "./images/airjordan1chicago.jpeg",
-            "quantity_available": 2
-        },
-        {
-            "name": "Air jordan 1 Retro High 'Origin Story'",
-            "price": 349.00,
-            "image": "./images/airjordan1originstory.jpeg",
-            "quantity_available": 5
-        },
-        {
-            "name": "Bapesta Low 'Black Shark Face'",
-            "price": 749.00,
-            "image": "./images/bapestalow.jpeg",
-            "quantity_available": 3
-        },
-        {
-            "name": "Yeezy 450 'Cloud White'",
-            "price": 289.00,
-            "image": "./images/yeezy450.jpeg",
-            "quantity_available": 3
-        }
-    ];
+    var products = "./"
 </script>
 <!DOCTYPE html>
 <html>
@@ -65,7 +28,7 @@
                 around the globe!
             </div>
         </aside>
-        <form action="./invoice.html" method="GET">
+        <form action="./purchase" method="POST">
             <main>
                 <script>
                     for (i = 0; i < products.length; i++) {
@@ -74,18 +37,24 @@
                         <p>$${products[i].price}</p>
                         <label>How many?</label>
                         <input type="text" placeholder=0 name="quantity${i}">
+                        <span id='qty_textbox_message'>Enter a quantity</span>
                         <img src=${products[i].image}>
                         </section>`
                         )
                     }
                 </script>
+
+                <div>
+                    <h2>${products[i].name}</h2>
+                    <p>$${products[i].price}</p>
+                </div>
             </main>
     </div>
     <input type="submit" value="Order">
     </form>
     <footer>
         <h1>
-            Your One Stop For Used Phones
+            Your One Stop For Shoes
         </h1>
     </footer>
 </body>
