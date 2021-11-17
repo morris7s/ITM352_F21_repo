@@ -1,24 +1,24 @@
-<script src="products.js" type="text/javascript">
+<script src="./products.js" type="text/javascript">
 // This links the product data to the generated invoice
 /* This file is used to creates and display a reciept */
 </script>
 <script>
-    function generate_item_rows(product_quantities_array) {
-        for (i in products) {
+    function generate_item_rows(quantity_box) {
+        for (i in products_array) {
             // prduct row 1
-            if (product_quantities_array[i] == 0) continue;
-            errors = isNonNegInt(product_quantities_array[i], true);
+            if (quantity_box[i] == 0) continue;
+            errors = isNonNegInt(quantity_box[i], true);
             if (errors.length == 0) {
-                extended_price = products[i].price * product_quantities_array[i];
+                extended_price = products_array[i].price * quantity_box[i];
                 subtotal = subtotal + extended_price;
             } else {
                 extended_price = "";
             }
             document.write(`
         <tr> 
-            <td width="43%">${products[i].name}</td>
-            <td align="center" width="11%">${product_quantities_array[i]}<br><font color="red">${errors.join('<br>')}</font></td>
-            <td width="13%">\$${products[i].price}</td>
+            <td width="43%">${products_array[i].name}</td>
+            <td align="center" width="11%">${quantity_box[i]}<br><font color="red">${errors.join('<br>')}</font></td>
+            <td width="13%">\$${products_array[i].price}</td>
             <td width="54%">\$${extended_price}</td>
           </tr> 
           `);
@@ -63,7 +63,7 @@
             </tr>
             <script>
                 subtotal = 0;
-                generate_item_rows(quantities);
+                generate_item_rows(products_array);
 
                 // Compute Sales Tax
                 var tax_rate = 0.0575;

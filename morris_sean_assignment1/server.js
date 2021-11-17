@@ -3,6 +3,7 @@ var products_array = require('./products.json');
 var express = require('express');
 var app = express();
 const qs = require('querystring');
+const { type } = require('os');
 
 // Routing 
 
@@ -14,13 +15,20 @@ app.all('*', function (request, response, next) {
 
 // process purchase request (validate quantities, check quantity available)
 // First thing I must do is validate data coming in from POST requests
-app.use(express.urlencoded({"extended": true}));
+app.use(express.urlencoded({ "extended": true }));
 
 app.post('/purchase', function (request, response, next) {
    // check if the quantites are valid
    // loop through all products to find any errors
    var errors = {};
-   for(i in products_array) {
+   var qty = request.body['quantitybox'];
+   console.log(qty + typeof qty);
+   // found in A1 workshop; used for 
+   for (i in products_array) {
+      var q = qty[i];
+      let name = products_array[i].name;
+      let name_price = products_array[i].price;
+      console.log(q);
       // check if nonnegint
 
       // checkif quantity wanted is avalable
@@ -31,12 +39,14 @@ app.post('/purchase', function (request, response, next) {
 
    var qstring = qs.stringify(request.body);
    // if no errors, send to invoivce.html with quanity data in querystring, otherwsie back to products_display.html
-   if(Object.keys(errors).length == 0) {
-       response.redirect('./invoice.html?'+qstring);
+   if (Object.keys(errors).length == 0) {
+      response.redirect('./invoice.html?' + qstring);
+      //    var quantity_data_num = parseInt(q);
+
    } else {
-      response.redirect('./products_display.html?'+qstring);
+      response.redirect('./products_display.html?' + qstring);
    }
-  
+
 })
 
 // route all other GET requests to files in public 
