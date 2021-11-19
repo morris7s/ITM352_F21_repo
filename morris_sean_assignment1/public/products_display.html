@@ -1,4 +1,54 @@
 <script src="./products.js"></script>
+<script>
+    // These functions are needed in order to check the inputs on product display page
+    // Taken from SmartPhoneProductsA!_Example from Assignment1 Module
+    // This function checks whether the inputs are NonNegInt
+    function isNonNegInt(q, return_errors = false) {
+        errors = []; // assume no errors at first
+        if (q == '') q = 0; // handle blank inputs as if they are 0
+        if (Number(q) != q) errors.push('<font color="red">Not a number!</font>'); // Check if string is a number value
+        else if (q < 0) errors.push('<font color="red">Negative value!</font>'); // Check if it is non-negative
+        else if (parseInt(q) != q) errors.push('<font color="red">Not an integer!</font>'); // Check that it is an integer
+        return return_errors ? errors : (errors.length == 0);
+    }
+    //This function looks at the textbox and shows if the input is not valid
+    function checkQuantityTextbox(theTextbox) {
+        errs = isNonNegInt(theTextbox.value, true);
+        if (errs.length == 0) errs = ['You want:'];
+        if (theTextbox.value.trim() == '') errs = ['Quantity'];
+        document.getElementById(theTextbox.name + '_label').innerHTML = errs.join(", ");
+    }
+
+    window.onload = function () {
+        let params = (new URL(document.location)).searchParams; // get the query string which has the form data
+        // form was submitted so check that quantities are valid then redirect to invoice if ok.
+        if (params.has('purchase_submit')) {
+            has_errors = false; // assume quantities are valid from the start
+            total_qty = 0; // need to check if something was selected so we will look if the total > 0
+            for (i in products_array) {
+                if (params.has(`quantity${i}`)) {
+                    a_qty = params.get(`quantity${i}`);
+                    // make textboxes sticky in case of invalid data
+                    quantity_form[`quantity${i}`].value = a_qty;
+                    total_qty += a_qty;
+                    if (!isNonNegInt(a_qty)) {
+                        has_errors = true; // oops, invalid quantity
+                        checkQuantityTextbox(quantity_form[`quantity${i}`]); // show where the error is
+                    }
+                }
+            }
+            // Now respond to errors or redirect to invoice if all is ok
+            if (has_errors) {
+                alert("Please enter only valid quantities!");
+            } else if (total_qty == 0) { // no quantity selections, just give a general alert
+                alert("Please select some quantities!");
+            } else { // all good to go!
+                window.location = `./invoice.html${document.location.search}`;
+                window.stop;
+            }
+        }
+    }
+</script>
 
 <!DOCTYPE html>
 <html>
@@ -33,8 +83,8 @@
                         document.write(`<section class="item">
                         <h2>${products_array[i].name}</h2>
                         <p>$${products_array[i].price}</p>
-                        <label>How many?</label>
-                        <input type="text" placeholder="${products_array[i].quantity_available} available" name="quantitybox[]">
+                        <label id="quantity${i}_label"}">How many?</label>
+                        <input type="text" placeholder="${products_array[i].quantity_available} available" name="quantity${i}" onkeyup="checkQuantityTextbox(this);">
                         <span id='qty_textbox_message'>Enter a quantity</span>
                         <img src=${products_array[i].image}>
                         </section>`
@@ -43,7 +93,7 @@
                 </script>
             </main>
     </div>
-    <input type="submit" value="Order">
+    <input type="submit" class="button" value="Purchase" name="purchase_submit">
     </form>
     <footer>
         <h1>

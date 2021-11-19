@@ -1,15 +1,34 @@
 <script src="./products.js" type="text/javascript">
 // This links the product data to the generated invoice
-/* This file is used to creates and display a reciept */
+    /* This file is used to creates and display a reciept */
 </script>
 <script>
-    function generate_item_rows(quantity_box) {
+    // taken from help hours from prof, lets the invoice take quantities from the query string
+    let params = (new URL(document.location)).searchParams;
+    var quantities = [];
+    // product quantities are in the query string, get them and put into quantities array
+    if (params.has('purchase_submit')) {
+        for (i in products_array) {
+            if (params.has(`quantity${i}`)) {
+                a_qty = params.get(`quantity${i}`);
+                quantities[i] = a_qty;
+            }
+        }
+    } else {
+        document.write('no form submitted')
+    }
+    // this converted the query string into an array called quantities
+    console.log(quantities);
+    console.log(typeof quantities);
+</script>
+<script>
+    function generate_item_rows(quantities) {
         for (i in products_array) {
             // prduct row 1
-            if (quantity_box[i] == 0) continue;
-            errors = isNonNegInt(quantity_box[i], true);
+            if (quantities[i] == 0) continue;
+            errors = isNonNegInt(quantities[i], true);
             if (errors.length == 0) {
-                extended_price = products_array[i].price * quantity_box[i];
+                extended_price = products_array[i].price * quantities[i];
                 subtotal = subtotal + extended_price;
             } else {
                 extended_price = "";
@@ -17,7 +36,7 @@
             document.write(`
         <tr> 
             <td width="43%">${products_array[i].name}</td>
-            <td align="center" width="11%">${quantity_box[i]}<br><font color="red">${errors.join('<br>')}</font></td>
+            <td align="center" width="11%">${quantities[i]}<br><font color="red">${errors.join('<br>')}</font></td>
             <td width="13%">\$${products_array[i].price}</td>
             <td width="54%">\$${extended_price}</td>
           </tr> 
@@ -63,7 +82,23 @@
             </tr>
             <script>
                 subtotal = 0;
-                generate_item_rows(products_array);
+                total_quantity = 0; // establishes total as 0 first to generate table
+                // got help from classmate for this code v 
+                for (i in products_array) {
+                    if (quantities[i] > 0) {
+                        total_quantity += Number(quantities[i]); // this transforms the string into a number and used to generate the amount bought
+                        extended_price = quantities[i] * products_array[i].price;
+                        subtotal += extended_price;
+                        document.write(`
+                        <tr>
+        <td width="43%"><em>${products_array[i].name}</em></td>
+        <td align="center" width="11%"><em>${quantities[i]}</em></td>
+        <td width="13%"><em>\$${products_array[i].price}</em></td>
+        <td width="54%"><em>\$${extended_price}</em></td>
+      </tr>
+                        `);
+                    }
+                }
 
                 // Compute Sales Tax
                 var tax_rate = 0.0575;
@@ -116,5 +151,10 @@
             Subtotals over $100 will be charged 5% of the subtotal amount
         </b></div>
 </body>
-
+<footer>
+    <script>
+        // this button at the bottom is used for returning to the homepage, maybe to make another order
+    </script>
+    <input type="button" class="button" value="Back to Home" onclick="window.location.href = 'products_display.html';">
+</footer>
 </html>
