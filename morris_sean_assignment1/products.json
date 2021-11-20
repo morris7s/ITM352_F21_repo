@@ -1,38 +1,38 @@
 [
     {
+        "name": "Air Jordan 1 Retro High 'Chicago'",
+        "price": 1499.00,
+        "image": "./images/shoe0.jpeg",
+        "quantity_available": 10
+    },
+    {
         "name": "Yeezy Slides 'Pure'",
         "price": 149.00,
-        "image": "./images/yeezyslidespure.jpeg",
+        "image": "./images/shoe1.jpeg",
         "quantity_available": 10
     },
     {
         "name": "Air Force 1 'Supreme White'",
         "price": 139.00,
-        "image": "./images/airforce1boxlogo.jpeg",
-        "quantity_available": 10
-    },
-    {
-        "name": "Air Jordan 1 Retro High 'Chicago'",
-        "price": 1499.00,
-        "image": "./images/airjordan1chicago.jpeg",
+        "image": "./images/shoe2.jpeg",
         "quantity_available": 10
     },
     {
         "name": "Air jordan 1 Retro High 'Origin Story'",
         "price": 349.00,
-        "image": "./images/airjordan1originstory.jpeg",
+        "image": "./images/shoe3.jpeg",
         "quantity_available": 10
     },
     {
         "name": "Bapesta Low 'Black Shark Face'",
         "price": 749.00,
-        "image": "./images/bapestalow.jpeg",
+        "image": "./images/shoe4.jpeg",
         "quantity_available": 10
     },
     {
         "name": "Yeezy 450 'Cloud White'",
         "price": 289.00,
-        "image": "./images/yeezy450.jpeg",
+        "image": "./images/shoe5.jpeg",
         "quantity_available": 10
     }
 ]

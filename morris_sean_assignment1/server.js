@@ -4,7 +4,7 @@ var app = express();
 const qs = require('querystring');
 const { type } = require('os');
 // Taken from Lab13; Give each product the property (total_sold) to give the server an idea of how many was sold during uptime
-products_array.forEach((prod, i) => { prod.total_sold = 0 });
+products_array.forEach((prod, i) => { prod.total_sold = 20 });
 
 // Routing 
 // monitor all requests
@@ -13,6 +13,7 @@ app.all('*', function (request, response, next) {
    next();
 });
 
+//Get request for products.js (it generates products_array from the JSON)
 app.get("/products.js", function (request, response, next) {
    response.type('.js');
    var products_str = `var products_array = ${JSON.stringify(products_array)};`;
@@ -33,46 +34,50 @@ function isNonNegInt(q, return_errors = false) {
 // First thing I must do is validate data coming in from POST requests
 app.use(express.urlencoded({ "extended": true }));
 
+// Got help from Prof and from classmates
 app.post('/purchase', function (request, response, next) {
-   // check if the quantites are valid
-   // loop through all products to find any errors
-   var errors = {}; // assume no errors at first
-   var qty = request.body;
-   console.log(qty);
-   console.log(typeof qty);
-   let has_errors = true; // makes has_errors blank for now, est. the var
-   // found in A1 workshop; used for 
+   // Turn the Post request body into a variable
+   let reqbody = request.body;
+
+   // Must check if the form input is 0 or not
+   var errors = {}; // assumes 0 errors at first
+   errors['no_quantities'] = 'Hey you forgot to select some items!';
+
    for (i in products_array) {
-      let q = request.body[`quantity${i}`]
-      let name = products_array[i].name;
-      let name_price = products_array[i].price;
-
-      // check if qtty is nonnegint
-      if (isNonNegInt(q) == false) { // if the quantity isn't true, it returns the error
-         errors[`quantity${i}`] = `Must enter valid quantities for ${name}`; // returns error to the specific product
+      reqbodyi = reqbody['quantity' + i]; // breaks down the reqbody into the each quanitity of certain product
+      // If invalid quantities inputed, there will be an alert for that product
+      if (isNonNegInt(reqbodyi) == false) {
+         errors['quantity' + i] = `Must enter valid amount for ${products_array[i].name}`;
       }
-      // check if quantity wanted is avalable
-
-      // check if  qtty is at least 1 quantity 
-      if (q > 0) {
-         has_quantities = true;
+      if (reqbodyi > 0) {
+         // if the amount passes isNonNegInt, it goes here because the value is above 0 (must be duh)
+         // deletes the errors if quantities are good to go
+         delete errors['no_quantities'];
+         // From here, we must validate if we have enough of that product to sell
+         if (reqbodyi > products_array[i].total_sold) {
+            errors['total_sold' + i] = `${reqbodyi} of ${products_array[i].name} is not currently available. Only ${products_array[i].total_sold} are available.`
+         }
       }
    }
-   // if has_quantities = false, generate an error
-   if (has_quantities == false) {
-      errors['no quantities'] = "You need to select some items";
-   }
 
+   // makes a querystring based on the POST request
    var qstring = qs.stringify(request.body);
-   // if no errors, send to invoivce.html with quanity data in querystring, otherwsie back to products_display.html
-   if (Object.keys(errors).length == 0) {
-      response.redirect('./invoice.html?' + qstring);
-
-   } else {
-      response.redirect('./products_display.html?' + qstring);
+   if (JSON.stringify(errors) === '{}') {
+      // as the data is posted, we must remove the amount purchased from total quantity available
+      for (i in products_array) {
+         products_array[i].total_sold -= Number(reqbody['quantity' + i]);
+      }
+      // After that, if the quantities are valid, it will send the client to the invoice page
+      response.redirect("./invoice.html?" + qstring);
+   }   // if there is anything else (theres an error), we will give the client the errors
+   else {
+      let errorsObj = { 'error': JSON.stringify(errors) };
+      qstring += '&' + qs.stringify(errorsObj);
+      // after getting the errors into a querystring, we send the client back to the products page
+      response.redirect("./products_display.html?" + qstring);
    }
 
-})
+});
 
 // route all other GET requests to files in public 
 app.use(express.static('./public'));

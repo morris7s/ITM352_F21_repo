@@ -10,3 +10,34 @@
     <i>Hello from <b>Sean Morris<b>!</i>
 </body>
 </html>
+
+
+
+
+<script>
+    window.onload = function () {
+        // Gets form submission data inside params (URL).
+        let params = (new URL(document.location)).searchParams;
+        // If form is submitted with errors, they will be alerted
+        // If not, the client will be redirected to the invoice page
+        if (params.has('purchase_submit')) {
+            for (i in products_array) {
+                if (params.has(`quantity${i}`)) {
+                    aquantity = params.get(`quantity${i}`)
+                    // make the textboxes keep their OG value (sticky)
+                    quantity_form[`quantity${i}`].value = aquantity;
+                    checkQuantityTextbox(quantity_form[`quantity${i}`]);
+                }
+            }
+            // This is for when the URl has errors, it will alert the user with the specific error
+            if (params.has('error')) {
+                var errors = JSON.parse(params.get('error'));
+                let error_string = '';
+                for (err in errors) {
+                    error_string += errors[err] + '\n';
+                }
+                alert(error_string);
+            }
+        }
+    }
+</script>
