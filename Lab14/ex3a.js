@@ -9,9 +9,9 @@ if (fs.existsSync(filename)) {
     console.log(`${filename} has ${file_stats.size} characters`);
     // gets the user data and recieves a string
     var user_data_str = fs.readFileSync(filename, 'utf-8');
-    // after getting the user's data, this will read it it and parse it into user_registration_info object
-    var user_registration_info = JSON.parse(user_data_str); // turns the string into an object
-    console.log(user_registration_info);
+    // after getting the user's data, this will read it it and parse it into user_data object
+    var user_data = JSON.parse(user_data_str); // turns the string into an object
+    console.log(user_data);
 } else {
     console.log(`Hey! ${filename} doesn't exist!`)
 };
@@ -39,9 +39,9 @@ app.post("/login", function (request, response) {
     let login_password = request.body['password'];
     // check if username exists within the accounts
     // as long as the entered usernmae exists, then we need to check if password entered matches the pass stored
-    if (typeof user_registration_info[login_username] != 'undefined') {
+    if (typeof user_data[login_username] != 'undefined') {
         // takes the stored password and checks if it matches with the inputed one
-        if (user_registration_info[login_username]["password"] == login_password) {
+        if (user_data[login_username]["password"] == login_password) {
             // if pass matches, this resonse is given
             response.send(`${login_username} is logged in`);
         }
@@ -74,21 +74,15 @@ app.get("/register", function (request, response) {
 
 app.post("/register", function (request, response) {
     // process a simple register form
-    // response.send(request.body.repeat_password);
+    // must assign the new inputs into variables
+    let new_login_username = request.body['username'];
+    let new_login_password = request.body['password'];
+    let new_login_repeatpassword = request.body['repeat_password'];
+    let new_login_email = request.body['email'];
 
-    // new user information
-    // connects inputed info into objects
-    username = request.body.username;
-    user_registration_info[username] = {};
-    user_registration_info[username].password = request.body.password;
-    user_registration_info[username].email = request.body.email;
-
-    // takes this info, convert into JSON object, and put into that array
-    let user_registration_input = JSON.stringify(user_registration_info);
-    fs.writeFileSync(user_registration_info, user_registration_input);
-
-    if (request.body.password == request.body.repeat_password) {
-        response.send(`Thank you for registering`)
+    // if the username doesnt exist AND both password and repeat password are the same, we will save the new user info
+    if(user_data[new_login_username] !='undefined' && new_login_password == new_login_repeatpassword){
+        console.log('testing so far')
     }
 });
 
