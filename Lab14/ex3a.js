@@ -60,7 +60,7 @@ app.get("/register", function (request, response) {
     // Give a simple register form
     str = `
         <body>
-        <form action="/process_register" method="POST">
+        <form action="" method="POST">
         <input type="text" name="username" size="40" placeholder="enter username" ><br />
         <input type="password" name="password" size="40" placeholder="enter password"><br />
         <input type="password" name="repeat_password" size="40" placeholder="enter password again"><br />
@@ -72,7 +72,7 @@ app.get("/register", function (request, response) {
     response.send(str);
 });
 
-app.post("/process_register", function (request, response) {
+app.post("/register", function (request, response) {
     // process a simple register form
     // response.send(request.body.repeat_password);
 
