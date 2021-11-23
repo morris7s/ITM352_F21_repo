@@ -62,6 +62,7 @@ app.get("/register", function (request, response) {
         <body>
         <form action="" method="POST">
         <input type="text" name="username" size="40" placeholder="enter username" ><br />
+        <input type="text" name="name" size="40" placeholder="enter name" ><br />
         <input type="password" name="password" size="40" placeholder="enter password"><br />
         <input type="password" name="repeat_password" size="40" placeholder="enter password again"><br />
         <input type="email" name="email" size="40" placeholder="enter email"><br />
@@ -82,7 +83,22 @@ app.post("/register", function (request, response) {
 
     // if the username doesnt exist AND both password and repeat password are the same, we will save the new user info
     if(user_data[new_login_username] !='undefined' && new_login_password == new_login_repeatpassword){
-        console.log('testing so far')
+        // got to make test work ^
+        // now must be able to write new user into the file
+        // 1 I will add to user_data
+        user_data[new_login_username] = {};
+        user_data[new_login_username].password = new_login_password;
+        user_data[new_login_username].email = new_login_email;
+        // 2 Convert the input (object) into a JSON string (stringify)
+        let new_user_obj = JSON.stringify(user_data);
+        // 3 write that input into the file
+        fs.writeFileSync(filename,new_user_obj);
+        // 4 redirect user to login page
+        console.log('Going to login, remeber the user and pass...')
+        response.redirect('/login');
+    } else {
+        console.log('Must type the same password!');
+        response.redirect('/register');
     }
 });
 
