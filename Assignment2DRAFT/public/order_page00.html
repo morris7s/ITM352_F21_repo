@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<script>//Got this site from Bootstrap BTW</script>
+<html lang="en">
+
+<script>
+    // this is for making sure all inputs are valid quantities. Taken from Lab13
+    function isNonNegInt(q, returnErrors = false) {
+        // checks if a string 'q' is a non-neg integer. If returnErrors is true, the array of errors is returned
+        //Other returns true if q is a non-neg int.
+        errors = []; // assume no errors at first
+        if (q == '') q = 0;
+        if (Number(q) != q) errors.push('Not a number!'); // Check if string is a number value
+        else {
+            if (q < 0) errors.push('Negative value!'); // Check if it is non-negative
+            if (parseInt(q) != q) errors.push('Not an integer!'); // Check that it is an integer
+        }
+        return returnErrors ? errors : (errors.length == 0);
+    };
+</script>
+
+<script>
+    // this is to show the type of error if the input is not valid
+    function checkQuantityTextbox(theTextbox) {
+        // is the textbox value a non-neg int?
+        var errors_array = isNonNegInt(theTextbox.value, true);
+        document.getElementById(quantity_return2).innerHTML = errors_array.join(' ');
+    }
+</script>
+
+<head>
+    <title>Sean's Shoes</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="./products.json"></script>
+    <style>
+        /* Remove the navbar's default rounded borders and increase the bottom margin */
+        .navbar {
+            margin-bottom: 50px;
+            border-radius: 0;
+        }
+
+        /* Remove the jumbotron's default bottom margin */
+        .jumbotron {
+            margin-bottom: 0;
+        }
+
+        /* Add a gray background color and some padding to the footer */
+        footer {
+            background-color: #f2f2f2;
+            padding: 25px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="jumbotron">
+        <div class="container text-center">
+            <h1>Sean's Shoes</h1>
+            <p>Subtitles</p>
+        </div>
+    </div>
+
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">Logo</a>
+            </div>
+            <div class="collapse navbar-collapse" id="myNavbar">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="#">Home</a></li>
+                    <li><a href="#">Products</a></li>
+                    <li><a href="#">Deals</a></li>
+                    <li><a href="#">Stores</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="#"><span class="glyphicon glyphicon-user"></span> Your Account</a></li>
+                    <li><a href="#"><span class="glyphicon glyphicon-shopping-cart"></span> Cart</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="total">
+        <form name="quantity_form" action="/purchase" method="POST">
+            <div class="container">
+                <script>
+                    // For loop that will generate products
+                    for (i = 0; i < products.length; i++) {
+                        document.write(
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <div class="panel panel-primary">
+                                        <div class="panel-heading">${products[i].name}</div>
+                                        <div class="panel-body"><img src="${products[i].images}" class="img-responsive" style="width:100%" alt="Image"></div>
+                                        <div class="panel-footer"><label>$139</label><br><label>Order:</label> <input type="text"
+                                            placeholder="0" name="quantity_textbox0"></br>
+                                            <font color="red"><label id="quantity_return0"></label></font>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        );
+                    }
+
+                </script>
+
+
+                <div class="col-sm-4">
+                    <div class="panel panel-danger">
+                        <div class="panel-heading">Air jordan 1 Retro High 'Origin Story'</div>
+                        <div class="panel-body"><img src="./images/airjordan1originstory.jpeg" class="img-responsive"
+                                style="width:100%" alt="Image"></div>
+                        <div class="panel-footer"><label>$349</label><br><label>Order: </label> <input type="text"
+                                placeholder="0" name="quantity_textbox1"></br>
+                            <font color="red"><label id="quantity_return1"></label></font>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="panel panel-success">
+                        <div class="panel-heading">Yeezy Slides 'Pure'</div>
+                        <div class="panel-body"><img src="./images/yeezyslidespure.jpeg" class="img-responsive"
+                                style="width:100%" alt="Image"></div>
+                        <div class="panel-footer"><label>$149</label><br><label>Order: </label> <input type="text"
+                                placeholder="0" name="quantity_textbox2" onkeyup="checkQuantityTextbox(this);"></br>
+                            <font color="red"><label id="quantity_return2"></label></font>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </div><br>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">Air Jordan 1 Retro High 'Chicago'</div>
+                    <div class="panel-body"><img src="./images/airjordan1chicago.jpeg" class="img-responsive"
+                            style="width:100%" alt="Image"></div>
+                    <div class="panel-footer"><label>$1499</label><br><label>Order: </label> <input type="text"
+                            placeholder="0" name="quantity_textbox3" ;></br>
+                        <font color="red"><label id="quantity_return3"></label></font>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">Yeezy 450 'Cloud White'</div>
+                    <div class="panel-body"><img src="./images/yeezy450.jpeg" class="img-responsive" style="width:100%"
+                            alt="Image"></div>
+                    <div class="panel-footer"><label>$289</label><br><label>Order: </label> <input type="text"
+                            placeholder="0" name="quantity_textbox4" ;></br>
+                        <font color="red"><label id="quantity_return4"></label></font>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">Bapesta Low 'Black Shark Face'</div>
+                    <div class="panel-body"><img src="./images/bapestalow.jpeg" class="img-responsive"
+                            style="width:100%" alt="Image"></div>
+                    <div class="panel-footer"><label>$749</label><br><label>Order: </label> <input type="text"
+                            placeholder="0" name="quantity_textbox5" ;></br>
+                        <font color="red"><label id="quantity_return5"></label></font>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div><br><br>
+
+    <footer class="container-fluid text-center">
+        <p>Online Store Copyright</p>
+        <button name="purchase_submit_button" type="submit" value="Purchase">Purchase</button>
+        </form>
+    </footer>
+
+</body>
+
+</html>

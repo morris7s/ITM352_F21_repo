@@ -1,0 +1,221 @@
+<script>
+    /*
+    Author: Sean Morris
+    Date: 19 November 2021
+    Description: This file is for the invoive display page. Oncve the server validates
+    */
+</script>
+<script src="./products.js" type="text/javascript">
+// This links the product data to the generated invoice
+    /* This file is used to creates and display a reciept */
+</script>
+<script>
+    // taken from help hours from prof, lets the invoice take quantities from the query string
+    let params = (new URL(document.location)).searchParams;
+    var quantities = [];
+    // product quantities are in the query string, get them and put into quantities array
+    if (params.has('purchase_submit')) {
+        for (i in products_array) {
+            if (params.has(`quantity${i}`)) {
+                a_qty = params.get(`quantity${i}`);
+                quantities[i] = a_qty;
+            }
+        }
+    } else {
+        document.write('no form submitted')
+    }
+    // this converted the query string into an array called quantities
+    console.log(quantities);
+    console.log(typeof quantities);
+</script>
+<script>
+    function generate_item_rows(quantities) {
+        for (i in products_array) {
+            // prduct row 1
+            if (quantities[i] == 0) continue;
+            errors = isNonNegInt(quantities[i], true);
+            if (errors.length == 0) {
+                extended_price = products_array[i].price * quantities[i];
+                subtotal = subtotal + extended_price;
+            } else {
+                extended_price = "";
+            }
+            document.write(`
+        <tr> 
+            <td width="43%">${products_array[i].name}</td>
+            <td align="center" width="11%">${quantities[i]}<br><font color="red">${errors.join('<br>')}</font></td>
+            <td width="13%">\$${products_array[i].price}</td>
+            <td width="54%">\$${extended_price}</td>
+          </tr> 
+          `);
+        };
+    };
+    function isNonNegInt(q, returnErrors = false) {
+        // checks if a string 'q' is a non-neg integer. If returnErrors is true, the array of errors is returned
+        //Other returns true if q is a non-neg int.
+        errors = []; // assume no errors at first
+        if (q == '') q = 0;
+        if (Number(q) != q) errors.push('Not a number!'); // Check if string is a number value
+        else {
+            if (q < 0) errors.push('Negative value!'); // Check if it is non-negative
+            if (parseInt(q) != q) errors.push('Not an integer!'); // Check that it is an integer
+        }
+        return returnErrors ? errors : (errors.length == 0);
+    };
+</script>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice</title>
+    <style>
+        body {
+            text-align: center;
+            background-image: linear-gradient(to bottom right, gray, maroon);
+            height: 100%;
+            color: mintcream;
+            font-family: 'Franklin Gothic Medium', Arial, Helvetica;
+            text-shadow: 2px 2px 4px #000000;
+        }
+
+        table {
+            text-align: center;
+            width: 75%;
+            border: 3px solid black;
+            font-family: 'Franklin Gothic Medium', Arial, Helvetica;
+        }
+
+        th,
+        td {
+            border-bottom: 2px solid black;
+            padding: 15px;
+            font-family: 'Franklin Gothic Medium', Arial, Helvetica;
+        }
+
+        .center {
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        div {
+            size: 100px;
+        }
+        input[type="button"] {
+            display: inline-block;
+            background-color: darkred;
+            border-radius: 10px;
+            border: 4px double #cccccc;
+            color: #eeeeee;
+            text-align: center;
+            font-size: 24px;
+            padding: 20px;
+            width: 200px;
+            -webkit-transition: all 0.5s;
+            -moz-transition: all 0.5s;
+            -o-transition: all 0.5s;
+            transition: all 0.5s;
+            cursor: pointer;
+            margin: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <br><br>
+    <h1>Thank You for your Order!</h1>
+    <h2>Here's your sales reciept:</h2>
+    <br>
+    <table class="center">
+        <tbody>
+            <tr>
+                <th style="text-align: center;" width="43%">Item</th>
+                <th style="text-align: center;" width="11%">quantity</th>
+                <th style="text-align: center;" width="13%">price</th>
+                <th style="text-align: center;" width="54%">extended price</th>
+            </tr>
+            <script>
+                subtotal = 0;
+                total_quantity = 0; // establishes total as 0 first to generate table
+                // got help from classmate for this code v 
+                for (i in products_array) {
+                    if (quantities[i] > 0) {
+                        total_quantity += Number(quantities[i]); // this transforms the string into a number and used to generate the amount bought
+                        extended_price = quantities[i] * products_array[i].price;
+                        subtotal += extended_price;
+                        document.write(`
+                        <tr>
+        <td width="43%"><em>${products_array[i].name}</em></td>
+        <td align="center" width="11%"><em>${quantities[i]}</em></td>
+        <td width="13%"><em>\$${products_array[i].price}</em></td>
+        <td width="54%"><em>\$${extended_price}</em></td>
+      </tr>
+                        `);
+                    }
+                }
+
+                // Compute Sales Tax
+                var tax_rate = 0.045;
+                var salestax = tax_rate * subtotal;
+
+                // Compute total before shipping
+                var total = subtotal + salestax;
+
+                // Compute Shipping cost
+                var shipping_costs = (total_quantity < 4) ? 30*total_quantity : (total_quantity < 11) ? 25*total_quantity : 15*total_quantity;
+
+                // compute grand total
+                var grand_total = total + shipping_costs;
+            </script>
+
+            <tr>
+                <td colspan="4" width="100%">&nbsp;</td>
+            </tr>
+            <tr>
+                <td style="text-align: center;" colspan="3" width="67%">Sub-total</td>
+                <td width="54%">$
+                    <script>document.write(`${subtotal.toFixed(2)}`)</script>
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align: center;" colspan="3" width="67%"><span>HI Sales Tax @ 4.5%</span></td>
+                <td width="54%">$
+                    <script>document.write(`${salestax.toFixed(2)}`)</script>
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align: center;" colspan="3" width="67%"><span>Shipping</span></td>
+                <td width="54%">$
+                    <script>document.write(`${shipping_costs.toFixed(2)}`)</script>
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align: center;" colspan="3" width="67%"><strong>Total</strong></td>
+                <td width="54%"><strong>$
+                        <script>document.write(`${grand_total.toFixed(2)}`)</script>
+                    </strong></td>
+            </tr>
+        </tbody>
+    </table> <br>
+    <div>
+        <p>OUR SHIPPING POLICY IS: <br>A Purchase of 3 shoes or less is $30/shoe<br>
+            A Purchase of 10 shoes or less is $25/shoe<br>
+            Orders with 11 or more shoes is $15/shoe</p>
+    </div>
+</body>
+<footer>
+    <script>
+        // this button at the bottom is used for returning to the homepage, maybe to make another order
+    </script>
+    <br>
+    <input type="button" class="button" value="Back to Home" onclick="window.location.href = 'products_display.html';">
+    <br>
+    <p>Author: Sean Morris<br>
+        <a href="mailto:morriss7@hawaii.edu">morriss7@hawaii.edu</a>
+    </p>
+</footer>
+
+</html>
