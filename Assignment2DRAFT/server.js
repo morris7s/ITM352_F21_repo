@@ -41,13 +41,16 @@ app.post('/purchase', function (request, response, next) {
 
    // Must check if the form input is 0 or not
    var errors = {}; // assumes 0 errors at first
-   errors['no_quantities'] = 'Hey you forgot to select some items!';
+   errors['no_quantities'] = 'Hey you forgot to select some items!';  // error is automaticly assigned so when button is pressed this error comes
 
    for (i in products_array) {
       reqbodyi = reqbody['quantity' + i]; // breaks down the reqbody into the each quanitity of certain product
       // If invalid quantities inputed, there will be an alert for that product
+      
       if (isNonNegInt(reqbodyi) == false) {
+         delete errors['no_quantities'];
          errors['quantity' + i] = `Must enter valid amount for ${products_array[i].name}`;
+      
       }
       if (reqbodyi > 0) {
          // if the amount passes isNonNegInt, it goes here because the value is above 0 (must be duh)
@@ -78,6 +81,23 @@ app.post('/purchase', function (request, response, next) {
    }
 
 });
+
+
+// Process a simple login form
+app.get("/login", function (request, response) {
+
+   // Give a simple login form
+   str = `
+   <body>
+   <form action="" method="POST">
+   <input type="text" name="username" size="40" placeholder="enter username" ><br />
+   <input type="password" name="password" size="40" placeholder="enter password"><br />
+   <input type="submit" value="Submit" id="submit">
+   </form>
+   </body>
+       `;
+   response.send(str);
+   });
 
 // route all other GET requests to files in public 
 app.use(express.static('./public'));
