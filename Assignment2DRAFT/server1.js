@@ -1,14 +1,17 @@
-var products_array = require('./products.json');
 var express = require('express');
 var app = express();
 const fs = require('fs');
 
 app.use(express.urlencoded({ extended: true }));
 
+var products_array = require('./products.json');
+
 var filename = './user_data.json';
 var user_data_str = fs.readFileSync(filename, 'utf-8');
 var users_reg_data = JSON.parse(user_data_str);
 console.log(users_reg_data);
+
+
 
 
 app.get("/invoice", function (request, response) {
