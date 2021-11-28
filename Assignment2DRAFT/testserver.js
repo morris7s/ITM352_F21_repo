@@ -11,12 +11,19 @@ var user_data_str = fs.readFileSync(filename, 'utf-8');
 var users_reg_data = JSON.parse(user_data_str);
 console.log(users_reg_data);
 
-
+//Get request for products.js (it generates products_array from the JSON)
+app.get("/products.js", function (request, response, next) {
+    response.type('.js');
+    var products_str = `var products_array = ${JSON.stringify(products_array)};`;
+    response.send(products_str);
+ });
 
 
 app.get("/invoice", function (request, response) {
     // Give a simple invoice using query string data
-    response.send(`You want ${request.query['quantity']} items`);
+    // response.send(`You want ${request.query['quantity']} items`);
+    let params = new URLSearchParams(request.body);
+    response.redirect("./invoice.html?" + params.toString());
 });
 
 app.get("/select_quantity", function (request, response) {
@@ -33,7 +40,7 @@ app.get("/select_quantity", function (request, response) {
     response.send(str);
 });
 
-app.post("/select_quantity", function (request, response) {
+app.post("/purchase", function (request, response) {
     // Redirect to login page with form data in query string
     let params = new URLSearchParams(request.body);
     response.redirect('./login?' + params.toString());
@@ -42,13 +49,14 @@ app.post("/select_quantity", function (request, response) {
 app.get("/login", function (request, response) {
     console.log(request.params.toString());
     // Give a simple login form
-    let params = new URLSearchParams(request.query);
+    let params = new URLSearchParams(request.body);
     str = `
 <body>
 <form action="?${params.toString()}" method="POST">
 <input type="text" name="username" size="40" placeholder="enter username" ><br />
 <input type="password" name="password" size="40" placeholder="enter password"><br />
 <input type="submit" value="Submit" id="submit">
+<input type="hidden" name="hiddenquantity" value="${params}">
 </form>
 </body>
     `;
