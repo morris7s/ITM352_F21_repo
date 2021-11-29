@@ -12,6 +12,11 @@
 <script>
     // taken from help hours from prof, lets the invoice take quantities from the query string
     let params = (new URL(document.location)).searchParams;
+    if (params.has(`username`)) {
+        var username = params.get(`username`);
+    } else {
+        window.location.href = `./login${location.search}`;
+    };
     var quantities = [];
     // product quantities are in the query string, get them and put into quantities array
     if (params.has('purchase_submit')) {
@@ -125,8 +130,9 @@
 </head>
 
 <body>
-    <br><br>
-    <h1>Thank You for your Order!</h1>
+    <br><br><script>
+      document.write(`<h1>Thank You for your Order ${username}!</h1>`)  </script>
+    
     <h2>Here's your sales reciept:</h2>
     <br>
     <table class="center">

@@ -19,12 +19,6 @@ app.get("/products.js", function (request, response, next) {
  });
 
 
-app.get("/invoice", function (request, response) {
-    // Give a simple invoice using query string data
-    // response.send(`You want ${request.query['quantity']} items`);
-    let params = new URLSearchParams(request.body);
-    response.redirect("./invoice.html?" + params.toString());
-});
 
 app.get("/select_quantity", function (request, response) {
 
@@ -47,16 +41,14 @@ app.post("/purchase", function (request, response) {
 });
 
 app.get("/login", function (request, response) {
-    console.log(request.params.toString());
     // Give a simple login form
-    let params = new URLSearchParams(request.body);
+    let params = new URLSearchParams(request.query);
     str = `
 <body>
 <form action="?${params.toString()}" method="POST">
 <input type="text" name="username" size="40" placeholder="enter username" ><br />
 <input type="password" name="password" size="40" placeholder="enter password"><br />
 <input type="submit" value="Submit" id="submit">
-<input type="hidden" name="hiddenquantity" value="${params}">
 </form>
 </body>
     `;
@@ -65,12 +57,16 @@ app.get("/login", function (request, response) {
 
 app.post("/login", function (request, response) {
     let params = new URLSearchParams(request.query);
+
     // Process login form POST and redirect to logged in page if ok, back to login page if not
     the_username = request.body['username'].toLowerCase();
     the_password = request.body['password'];
     if (typeof users_reg_data[the_username] != 'undefined') {
         if (users_reg_data[the_username].password == the_password) {
-            response.redirect('./invoice?' + params.toString());
+            params.append('username', the_username);
+
+            response.redirect(`./invoice.html?${params.toString()}`);
+            return;
         } else {
             response.send(`Wrong password!`);
         }
