@@ -1,0 +1,130 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: 'Franklin Gothic Medium', Arial, Helvetica;
+}
+
+.container {
+    background-image: linear-gradient(to bottom right, gray, maroon);
+    height: 100vh;
+    width: 100vw;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-container {
+    width: 60%;
+    height: 60%;
+    background-color: #e6e6e6;
+    border-radius: 8px;
+    box-shadow: 2px 2px 16px black;
+
+    display: flex;
+}
+
+.left {
+    width: 39%;
+    height: 100%;
+    background-image: url(../images/logo1.png);
+    background-repeat: no-repeat;
+    align-items:center;
+    background-position: left top;
+}
+
+.right {
+    width: 50%;
+    padding: 30px;
+}
+
+.right h1 {
+    color: darkred;
+    font-weight: bold;
+}
+
+.right p {
+    font-size: 18px;
+    color: darkred;
+    margin-top: 8px;
+    margin-bottom: 30px;
+}
+
+.form-input {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 16px;
+}
+
+.form-input label {
+    color:darkred;
+    font-size: 16px;
+    
+    margin-bottom: 8px;
+}
+
+.form-input input {
+    border: none;
+    padding: 12px;
+    background-color: #f2f2f2;
+    border-radius: 4px;
+    transition: all 0.3s ease-in;
+    border-left: 4px solid darkred;
+}
+
+.form-input input:focus {
+    outline: none;
+    box-shadow: 0 0 5px red;
+    transition: all 0.3s ease-in;
+}
+
+.forget-pass {
+    color: darkred;
+    text-decoration: none;
+    font-size: 12px;
+
+}
+
+.cta-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.cta-container button,
+.cta-container a {
+    padding: 12px 18px;
+    width: 45%;
+    font-size: 14px;
+}
+
+.cta-container button {
+    border: none;
+    color: white;
+    background-color: darkred;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.cta-container button:focus {
+    outline: none;
+}
+
+.cta-container a {
+    border: none;
+    color: darkred;
+    border: 2px solid darkred;
+    border-radius: 4pc;
+    font-weight: bold;
+    text-decoration: none;
+    text-align: center;
+}
+
+.cta-container a:hover {
+    background-color: darkred;
+    color: white;
+    transition: all 0.3s ease-in;
+}

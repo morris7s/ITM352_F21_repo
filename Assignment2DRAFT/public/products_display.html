@@ -15,6 +15,7 @@
         errors = []; // assume no errors at first
         if (q == '') q = 0; // handle blank inputs as if they are 0
         if (Number(q) != q) errors.push('<font color="red">Not a number!</font>'); // Check if string is a number value
+        if (q > products_array[i].total_sold) errors.push(`<font color="red">We only have ${products_array[i].total_sold} available for sale!</font>`); // Check if string is a number value
         else if (q < 0) errors.push('<font color="red">Negative value!</font>'); // Check if it is non-negative
         else if (parseInt(q) != q) errors.push('<font color="red">Not an integer!</font>'); // Check that it is an integer
         return return_errors ? errors : (errors.length == 0);
@@ -48,7 +49,10 @@
                 for (err in errors) {
                     error_string += errors[err] + '\n';
                 }
-                alert(error_string);
+                // This code v is to make errors appear in a textbox at the top of the site, instead of an alert
+                // Used https://www.geeksforgeeks.org/how-to-display-error-without-alert-box-using-javascript/ for more help
+                var errorbox = document.getElementById("errorbox");
+                errorbox.innerHTML = "<span style='color: red;'>" + error_string;
             }
         }
     };
@@ -62,84 +66,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sean's Shoe Store</title>
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-    <style>
-        h1,
-        h2,
-        p,
-        body {
-            font-family: 'Franklin Gothic Medium', Arial, Helvetica;
-            text-shadow: 2px 2px 4px #000000;
-        }
+    <link rel="stylesheet" href="./css/product-style.css">
 
-        body {
-            padding-top: 150px;
-            text-align: center;
-            background-image: linear-gradient(to bottom right, gray, maroon);
-        }
-
-        input[type=submit] {
-            display: inline-block;
-            background-color: darkred;
-            border-radius: 10px;
-            border: 4px double #cccccc;
-            color: #eeeeee;
-            text-align: center;
-            font-size: 28px;
-            padding: 20px;
-            width: 200px;
-            -webkit-transition: all 0.5s;
-            -moz-transition: all 0.5s;
-            -o-transition: all 0.5s;
-            transition: all 0.5s;
-            cursor: pointer;
-            margin: 5px;
-        }
-        input[type=button] {
-            display: inline-block;
-            background-color: darkred;
-            border-radius: 10px;
-            border: 4px double #cccccc;
-            color: #eeeeee;
-            text-align: center;
-            font-size: 28px;
-            padding: 20px;
-            width: 200px;
-            -webkit-transition: all 0.5s;
-            -moz-transition: all 0.5s;
-            -o-transition: all 0.5s;
-            transition: all 0.5s;
-            cursor: pointer;
-            margin: 5px;
-        }
-        .column {
-            float: left;
-            width: 50%;
-        }
-
-        /* Clear floats after the columns */
-        .row:after {
-            content: "";
-            display: table;
-            clear: both;
-        }
-
-        footer {
-            font-size: 20px;
-            font-family: 'Franklin Gothic Medium', Arial, Helvetica;
-            color: mintcream;
-        }
-        div.column {
-            color: mintcream;
-        }
-         img {
-            border: 4px solid black;
-            border-radius: 4px;
-         }
-    </style>
 
 </head>
 
 <body>
+    <h3><span id="errorbox"></span></h3>
+    
     <div class="w3-top" style="background-color: black;">
         <div class="w3-white w3-xlarge" style="max-width:1200px;margin:auto; background-color: blue;">
             <div class="w3-button w3-padding-16 w3-left" onclick="w3_open()" style="background-color: black;color: mintcream;">☰</div>
@@ -182,7 +116,6 @@
         <footer>
             <input type="submit" class="button" value="Purchase" name="purchase_submit">
             </form>
-            <button type="submit" class ="button" formaction="/login">Submit to another page</button>
             <p>Author: Sean Morris<br>
                 <a href="mailto:morriss7@hawaii.edu">morriss7@hawaii.edu</a>
             </p>

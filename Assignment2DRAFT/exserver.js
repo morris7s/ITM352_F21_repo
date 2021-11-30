@@ -38,7 +38,6 @@ app.use(express.urlencoded({ "extended": true }));
 app.post('/purchase', function (request, response, next) {
    // Turn the Post request body into a variable
    let reqbody = request.body;
-
    // Must check if the form input is 0 or not
    var errors = {}; // assumes 0 errors at first
    errors['no_quantities'] = 'Hey you forgot to select some items!';  // error is automaticly assigned so when button is pressed this error comes
@@ -81,26 +80,3 @@ app.post('/purchase', function (request, response, next) {
    }
 
 });
-
-
-// Process a simple login form
-app.get("/login", function (request, response) {
-
-   // Give a simple login form
-   str = `
-   <body>
-   <form action="" method="POST">
-   <input type="text" name="username" size="40" placeholder="enter username" ><br />
-   <input type="password" name="password" size="40" placeholder="enter password"><br />
-   <input type="submit" value="Submit" id="submit">
-   </form>
-   </body>
-       `;
-   response.send(str);
-   });
-
-// route all other GET requests to files in public 
-app.use(express.static('./public'));
-
-// start server
-app.listen(8080, () => console.log(`listening on port 8080`));
