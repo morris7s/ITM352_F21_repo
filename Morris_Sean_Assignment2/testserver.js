@@ -133,7 +133,7 @@ app.post("/login.html", function (request, response) {
         errors['blank_form'] = `Please enter username and password`;
     }
     else if(typeof users_reg_data[the_username] == 'undefined'){
-        errors['wrong_username'] = `Username not found`;
+        errors['username'] = `Username not found`;
     }
     else if (typeof users_reg_data[the_username] != 'undefined') {
         if(users_reg_data[the_username].password != the_password){
