@@ -30,20 +30,6 @@ app.get("/products.js", function (request, response, next) {
     response.send(products_str);
 });
 
-app.get("/select_quantity", function (request, response) {
-
-    // Give a simple quantity form
-    str = `
-    <body>
-    <form action="" method="POST">
-    <input type="text" name="quantity" size="40" placeholder="enter quantity desired" ><br />
-    <input type="submit" value="Submit" id="submit">
-    </form>
-    </body>
-        `;
-    response.send(str);
-});
-
 app.post("/purchase", function (request, response) {
     // Most of the code comes from assignment 1
     // Must check first if quantities are valid first before redirecting
@@ -84,7 +70,7 @@ app.post("/purchase", function (request, response) {
             products_array[i].total_sold -= Number(reqbody['quantity' + i]);
         }
         // Now that quantities are valid and supply is updated, we take the client to the login page with the quantities in a qs
-        response.redirect('./login?' + paramsstring);
+        response.redirect('./login.html?' + paramsstring);
     }
     // But, if there are errors, we make errors into an Obj to be put into the qs so the products display page can take the errors from the qs
     // Then, the client will be redirected to products display page with the quanitites plus the errors
@@ -112,11 +98,14 @@ app.get("/login", function (request, response) {
     response.send(str);
 });
 
-app.post("/login", function (request, response) {
+/* app.post("/login.html", function (request, response) {
     let params = new URLSearchParams(request.query);
+    var errors = {}; // assumes 0 errors at first
+    let paramsstring = params.toString();
     // Process login form POST and redirect to logged in page if ok, back to login page if not
     the_username = request.body['username'].toLowerCase();
     the_password = request.body['password'];
+    console.log(params);
     if (typeof users_reg_data[the_username] != 'undefined') {
         if (users_reg_data[the_username].password == the_password) {
             params.append('username', the_username);
@@ -126,8 +115,42 @@ app.post("/login", function (request, response) {
             response.send(`Wrong password!`);
         }
         return;
+    } else {
+        let errorsObj = { 'error': JSON.stringify(errors) };
+        paramsstring += '&' + stringify(errorsObj);
+        response.redirect("./login.html?" + paramsstring)
     }
-    response.send(`${the_username} does not exist`);
+}); */
+
+app.post("/login.html", function (request, response) {
+    let params = new URLSearchParams(request.query);
+    let paramsstring = params.toString();
+    var errors = {}; // assumes 0 errors at first
+    the_username = request.body['username'].toLowerCase();
+    the_password = request.body['password'];
+    if (request.body['username'] == "" || request.body['password'] == "") {
+        //response.send('must fill in the form!');
+        errors['blank_form'] = `Please enter username and password`;
+    }
+    else if(typeof users_reg_data[the_username] == 'undefined'){
+        errors['wrong_username'] = `Username not found`;
+    }
+    else if (typeof users_reg_data[the_username] != 'undefined') {
+        if(users_reg_data[the_username].password != the_password){
+            errors['wrong_password'] = `Password incorrect`;
+        }
+    }
+    // Now that I generated errors for certain login failures, I need a way to send it back to the login page to show the error and let client re-enter user and pass
+    // BUT, if there is an error, we take that error, add it to the qs, and then redirect back to login with said errors 
+    if (JSON.stringify(errors) === '{}') {
+        // if there are 0 errors, meaning login works , we send client to invoice with the username in the query
+        params.append('username', the_username);
+        response.redirect(`./invoice.html?${params.toString()}`);
+    } else {
+        let errorsObj = { 'error': JSON.stringify(errors) };
+        paramsstring += '&' + stringify(errorsObj);
+        response.redirect("./login.html?" + paramsstring)
+    }
 });
 
 
