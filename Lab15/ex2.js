@@ -1,23 +1,44 @@
 var express = require('express');
 var app = express();
 const fs = require('fs');
+
 var cookieParser = require('cookie-parser');
 app.use(cookieParser());
+
+var session = require('express-session');
+app.use(session({secret: "MySecretKey", resave: true, saveUninitialized: true}));
 
 var filename = './user_data.json';
 
 if (fs.existsSync(filename)) {
     var file_stats = fs.statSync(filename); // takes the 'stats' from the file source
-    console.log(`${filename} has ${file_stats.size} characters`);
+    // console.log(`${filename} has ${file_stats.size} characters`);
     // gets the user data and recieves a string
     var user_data_str = fs.readFileSync(filename, 'utf-8');
     // after getting the user's data, this will read it it and parse it into user_data object
     var user_data = JSON.parse(user_data_str); // turns the string into an object
-    console.log(user_data);
+    // console.log(user_data);
+    console.log(`sup dude`);
 } else {
     console.log(`Hey! ${filename} doesn't exist!`)
 };
 
+app.get('/set_cookie', function(request, response){
+    // this will send a cookie to the client (requester)
+    response.cookie('name', 'Sean', {maxAge: 5000});
+    response.send('The name cookie has been sent')
+});
+
+app.get('/use_cookie', function(request, response){
+    // this will get the name from the client (requester) and respond with name and message
+    console.log(request.cookies);
+    // response.send(`Welcome to the use cookie page ${request.cookies['name']}!`);
+    response.send(`Welcome to the use cookie page ${request.cookies.name}!`);
+});
+
+app.get('/use_session', function(request, response){
+    response.send(`welcome, your session ID is ${request.session.id}`);
+})
 app.use(express.urlencoded({ extended: true })); // this takes the data from the form field (which is 'urlencoded'), it will decode the data out of the request, and puts it into a request.body for the POST 
 
 app.get("/login", function (request, response) {
@@ -44,8 +65,17 @@ app.post("/login", function (request, response) {
     if (typeof user_data[login_username] != 'undefined') {
         // takes the stored password and checks if it matches with the inputed one
         if (user_data[login_username]["password"] == login_password) {
+            if (typeof request.session['last login'] != 'undefined'){
+                var last_login = request.session['last login'];
+            } else {
+                // request.session['last login'] = 'First time loggin in eh!';
+                var last_login = `First Login`;
+            }
+            // putting login date into session
+            request.session['last login'] = new Date().toISOString();
+            response.send(`You last logged in on ${last_login}!`);
             // if pass matches, this resonse is given
-            response.send(`${login_username} is logged in`);
+            //response.send(`${login_username} is logged in`);
         }
         else {
             // if pass doesn't match, this reponse is given
@@ -104,17 +134,6 @@ app.post("/register", function (request, response) {
     }
 });
 
-app.get('/set_cookie', function(request, response){
-    // this will send a cookie to the client (requester)
-    response.cookie('name', 'Sean', {maxAge: 5000});
-    response.send('The name cookie has been sent')
-});
 
-app.get('/use_cookie', function(request, response){
-    // this will get the name from the client (requester) and respond with name and message
-    console.log(request.cookies);
-    // response.send(`Welcome to the use cookie page ${request.cookies['name']}!`);
-    response.send(`Welcome to the use cookie page ${request.cookies.name}!`)
-});
 
 app.listen(8080, () => console.log(`listening on port 8080`));
