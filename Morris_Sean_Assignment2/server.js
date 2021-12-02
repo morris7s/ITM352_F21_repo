@@ -1,3 +1,8 @@
+/*
+    Author: Sean Morris
+    Date: 1 December 2021
+    Note: This is added work to my server from assignment1. A lot of the new code came from professor Port's assistance (especially in responding with errors) and from Brandon Jude's code
+*/
 var express = require('express');
 var app = express();
 const fs = require('fs');
@@ -8,6 +13,9 @@ app.use(express.urlencoded({ extended: true }));
 var products_array = require('./products.json');
 products_array.forEach((prod, i) => { prod.total_available = 20 });
 // ^ makes the supply for each product set at 20
+
+// gets the user data and puts that into a variable to use to give to pages
+var all_user_data = require('./user_data.json');
 
 // User info JSON file
 var filename = './user_data.json';
@@ -30,6 +38,13 @@ app.get("/products.js", function (request, response, next) {
     response.send(products_str);
 });
 
+// get request for user info for invoice page
+app.get("users_data.js", function (request, response, next) {
+    response.type('.js');
+    var user_str = `var users_data = ${JSON.stringify(all_user_data)};`;
+    response.send(user_str);
+})
+
 app.post("/purchase", function (request, response) {
     // Most of the code comes from assignment 1
     // Must check first if quantities are valid first before redirecting
@@ -40,7 +55,6 @@ app.post("/purchase", function (request, response) {
     for (i in products_array) {
         // breaks down the reqbody into the each quanitity of certain product v
         reqbodyi = reqbody['quantity' + i];
-
         // If invalid quantities inputed, there will be an alert for that product v
         // This 'if' is for individual products that have an invalid quantity amount 
         if (isNonNegInt(reqbodyi) == false) {
@@ -81,28 +95,9 @@ app.post("/purchase", function (request, response) {
     }
 });
 
-app.get("/login", function (request, response) {
-    // Give a simple login form
-    // Added a button for those who need to register an account
-    let params = new URLSearchParams(request.query);
-    str = `
-    <body>
-    <form action="?${params.toString()}" method="POST">
-    <input type="text" name="username" size="40" placeholder="enter username"><br />
-    <input type="password" name="password" size="40" placeholder="enter password"><br />
-    <input type="submit" value="Submit" id="submit"></form>
-    <form action="/reg?${params.toString()}" method="POST">
-    <input type="submit" value="Register an Account" id="submit">
-    </form>
-    </body>`;
-    response.send(str);
-});
-
-
 app.post("/login.html", function (request, response) {
     let params = new URLSearchParams(request.query);
     let paramsstring = params.toString();
-
     var errors = {}; // assumes 0 errors at first
     username = request.body['username'].toLowerCase();
     password = request.body['password'];
@@ -110,12 +105,16 @@ app.post("/login.html", function (request, response) {
     if (request.body['username'] == "") {
         errors['username'] = `Please enter your username`;
     }
-    else if (typeof users_reg_data[username] == 'undefined') {
-        errors['username'] = `Username not found`;
+    if (request.body['password'] == "") {
+        errors['password'] = `Please enter your password`;
     }
-    else if (typeof users_reg_data[username] != 'undefined') {
+    if (typeof users_reg_data[username] == 'undefined') {
+        errors['username'] = `Username not found`;
+        errors['password'] = ` `;
+    }
+    if (typeof users_reg_data[username] != 'undefined') {
         if (users_reg_data[username].password != password) {
-            errors['username'] = ``;
+            errors['username'] = ` `;
             errors['password'] = `Password incorrect`;
         }
     }
@@ -143,29 +142,81 @@ app.post("/reg", function (request, response) {
     response.redirect('./register.html?' + params);
 })
 
-
 app.post("/register.html", function (request, response) {
     let params = new URLSearchParams(request.query);
+    console.log(request.body);
     // process a simple register form
     // establishes blank errors so there is no undefined
+    // alot of this code comes from RegEx, Brandon Jude from class, and https://www.w3resource.com/javascript/form/javascript-sample-registration-form-validation.php - found from assignment2 tutorial
     var errors = {};
-    username = request.body.username.toLowerCase();
+    // establish req.body inputs as variables
+    username = request.body['username'].toLowerCase();
+    password = request.body['password'];
+    fullname = request.body['fullname'];
+    repeat_password = request.body['repeat_password'];
+    email = request.body['email'];
+
+
+    // below are checks for username
+    // plan on organizing validation from most complex to least to give the most accurate error
+    // check if username input is entered
+    if (request.body.username == '') {
+        errors['username'] = `You need to enter a username!`;
+    }
     // check is username taken
     if (typeof users_reg_data[username] != 'undefined') {
-        errors['username'] = `Hey! ${username} is already registered!`;
+        errors['username'] = `Hey! ${username} is already taken!`;
     }
+    // if username meets character length requirement < 4
+    if (username.length < 4) {
+        errors['username'] = `Username must be longer than 4 characters`;
+    }
+    // if username meets character length requirement > 10
+    if (username.length > 10) {
+        errors['username'] = `Username has maximum of 10 characters`;
+    }
+    // need to check if username has special characters
+    // add special characters to a variable
+    var badcharacters = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/? ]+/;
+    var badcharacters_username = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
+    if (username.match(badcharacters_username)) {
+        errors['username'] = `Username must have letters and numbers only`;
+    }
+    // now to check passwords
+    // check if password matches repeat password
     if (request.body.password != request.body.repeat_password) {
         errors['password'] = `Repeat password not the same as password!`;
+        errors['repeat_password'] = `Repeat password not the same as password!`;
     }
-    if (request.body.username == '') {
-        errors['username'] = `You need to select a username!`;
+
+    // check if password is 6 characters or less
+    if (password.length < 6) {
+        errors['password'] = `Password must have a minimum of 6 characters`;
     }
+    // check if theres a password input
     if (request.body.password == '') {
         errors['password'] = `You need a password!`;
     }
+    //now to check email
+    // taken from https://www.w3resource.com/javascript/form/javascript-sample-registration-form-validation.php
+    var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    if (email.match(mailformat)) {
+    } else {
+        errors['email'] = `must enter a valid email without special characters`;
+    }
+
+    // now to check full name
+    // only allows letters and max of 30 characters
+    // var lettersonly = /^[A-Za-z]+$/;
+    if (fullname.length < 31) {
+    } else {
+        errors['fullname'] = `Full name must be letters only and less than 30 characters`;
+    }
     // if theres 0 errors, write data to reg file, and redirect to invoice
     // otherwise if there are errors, send client back to register with data and error
-    if (Object.keys(errors).length == 0) {
+    // so basically, im gonna assume errors for each one in order to try get rid of undefined popping up, plus its an eye sore
+    if (Object.keys(errors).length === 0) {
+        console.log(errors);
         delete errors;
         users_reg_data[username] = {};
         users_reg_data[username].password = request.body.password;

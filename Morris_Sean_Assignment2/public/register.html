@@ -15,8 +15,11 @@
             // Put back reg-data into form input -sticky
             document.getElementById(input_name).value = reg_data[input_name];
             // if theres an error for this input name, put into corresponding span
-            if (typeof errors[input_name] != 'undifined') {
+            if (typeof errors[input_name] != 'undefined') {
                 document.getElementById(input_name + '_error').innerHTML = errors[input_name]; 
+            }
+            if (typeof errors[input_name] == 'undefined') {
+                document.getElementById(input_name + '_error').innerHTML = " ";
             }
         }
     }}
@@ -43,10 +46,12 @@
                 <div class="form-input">
                     <label for="username">Username</label><span class="span" id="username_error"></span>
                     <input type="text" id="username" name="username" size="20" placeholder="Username">
+                    
                 </div>
                 <div class="form-input">
                     <label for="fullname">Full Name</label><span class="span" id="fullname_error"></span>
-                    <input type="text" id="fullname" name="fullname" size="20" placeholder="Full Name">
+                    <input type="text" id="fullname" name="fullname" size="20" placeholder="Full Name" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode==32)">
+                    <script>// got the above code from https://www.11zon.com/zon/html/html-input-text-only-letters-and-space.php, basically only allows letters and numbers for full name</script>
                 </div>
                 <div class="form-input">
                     <label for="password">Password</label><span class="span" id="password_error"></span>

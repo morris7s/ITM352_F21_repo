@@ -14,8 +14,11 @@
             // put bakc login data into form field
             document.getElementById(input_name).value = login_data[input_name];
             // if theres an error for this input name, put into corresponding span
-            if (typeof errors[input_name] != 'undifined') {
+            if (typeof errors[input_name] != 'undefined') {
                 document.getElementById(input_name + '_error').innerHTML = errors[input_name];
+            }
+            if (typeof errors[input_name] == 'undefined') {
+                document.getElementById(input_name + '_error').innerHTML = " ";
             }
         }
     }};
