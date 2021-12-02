@@ -6,7 +6,7 @@ const { stringify } = require('querystring');
 app.use(express.urlencoded({ extended: true }));
 
 var products_array = require('./products.json');
-products_array.forEach((prod, i) => { prod.total_sold = 20 });
+products_array.forEach((prod, i) => { prod.total_available = 20 });
 // ^ makes the supply for each product set at 20
 
 // User info JSON file
@@ -53,8 +53,8 @@ app.post("/purchase", function (request, response) {
             // deletes the errors if quantities are good to go
             delete errors['no_quantities'];
             // From here, we must validate if we have enough of that product to sell
-            if (reqbodyi > products_array[i].total_sold) {
-                errors['total_sold' + i] = `${reqbodyi} of ${products_array[i].name} is not currently available. Only ${products_array[i].total_sold} are available.`
+            if (reqbodyi > products_array[i].total_available) {
+                errors['total_available' + i] = `${reqbodyi} of ${products_array[i].name} is not currently available. Only ${products_array[i].total_available} are available.`
             }
         }
     }
@@ -67,7 +67,7 @@ app.post("/purchase", function (request, response) {
     if (JSON.stringify(errors) === '{}') {
         // if theres 0 errors, we update the supply of products
         for (i in products_array) {
-            products_array[i].total_sold -= Number(reqbody['quantity' + i]);
+            products_array[i].total_available -= Number(reqbody['quantity' + i]);
         }
         // Now that quantities are valid and supply is updated, we take the client to the login page with the quantities in a qs
         response.redirect('./login.html?' + paramsstring);
@@ -98,58 +98,39 @@ app.get("/login", function (request, response) {
     response.send(str);
 });
 
-/* app.post("/login.html", function (request, response) {
-    let params = new URLSearchParams(request.query);
-    var errors = {}; // assumes 0 errors at first
-    let paramsstring = params.toString();
-    // Process login form POST and redirect to logged in page if ok, back to login page if not
-    the_username = request.body['username'].toLowerCase();
-    the_password = request.body['password'];
-    console.log(params);
-    if (typeof users_reg_data[the_username] != 'undefined') {
-        if (users_reg_data[the_username].password == the_password) {
-            params.append('username', the_username);
-            response.redirect(`./invoice.html?${params.toString()}`);
-            return;
-        } else {
-            response.send(`Wrong password!`);
-        }
-        return;
-    } else {
-        let errorsObj = { 'error': JSON.stringify(errors) };
-        paramsstring += '&' + stringify(errorsObj);
-        response.redirect("./login.html?" + paramsstring)
-    }
-}); */
 
 app.post("/login.html", function (request, response) {
     let params = new URLSearchParams(request.query);
     let paramsstring = params.toString();
+
     var errors = {}; // assumes 0 errors at first
-    the_username = request.body['username'].toLowerCase();
-    the_password = request.body['password'];
-    if (request.body['username'] == "" || request.body['password'] == "") {
-        //response.send('must fill in the form!');
-        errors['blank_form'] = `Please enter username and password`;
+    username = request.body['username'].toLowerCase();
+    password = request.body['password'];
+    //if username isn't filled out, tell them to enter a username
+    if (request.body['username'] == "") {
+        errors['username'] = `Please enter your username`;
     }
-    else if(typeof users_reg_data[the_username] == 'undefined'){
+    else if (typeof users_reg_data[username] == 'undefined') {
         errors['username'] = `Username not found`;
     }
-    else if (typeof users_reg_data[the_username] != 'undefined') {
-        if(users_reg_data[the_username].password != the_password){
-            errors['wrong_password'] = `Password incorrect`;
+    else if (typeof users_reg_data[username] != 'undefined') {
+        if (users_reg_data[username].password != password) {
+            errors['username'] = ``;
+            errors['password'] = `Password incorrect`;
         }
     }
     // Now that I generated errors for certain login failures, I need a way to send it back to the login page to show the error and let client re-enter user and pass
     // BUT, if there is an error, we take that error, add it to the qs, and then redirect back to login with said errors 
-    if (JSON.stringify(errors) === '{}') {
+    if (Object.keys(errors).length == 0) {
         // if there are 0 errors, meaning login works , we send client to invoice with the username in the query
-        params.append('username', the_username);
+        delete errors;
+        params.append('username', username);
         response.redirect(`./invoice.html?${params.toString()}`);
     } else {
-        let errorsObj = { 'error': JSON.stringify(errors) };
-        paramsstring += '&' + stringify(errorsObj);
-        response.redirect("./login.html?" + paramsstring)
+        // if theres errors, send input and error data back to login page plus qs for products info
+        params.append('login_data', JSON.stringify(request.body));
+        params.append('login_errors', JSON.stringify(errors));
+        response.redirect(`./login.html?${params.toString()}`);
     }
 });
 
@@ -159,64 +140,48 @@ app.post("/login.html", function (request, response) {
 // This is for when the client selects to register an account
 app.post("/reg", function (request, response) {
     let params = new URLSearchParams(request.query);
-    response.redirect('./register?' + params);
+    response.redirect('./register.html?' + params);
 })
-var errors = {}; // keep errors on server to share with registration page
-app.get("/register", function (request, response) {
-    let params = new URLSearchParams(request.query);
-    // Give a simple register form
-    str = `
-    <body>
-    <form action="?${params.toString()}" method="POST">
-    <input type="text" name="username" size="40" placeholder="enter username" > 
-    ${(typeof errors['no_username'] != 'undefined') ? errors['no_username'] : ''}
-    ${(typeof errors['username_taken'] != 'undefined') ? errors['username_taken'] : ''}
-    <br />
-    <input type="password" name="password" size="40" placeholder="enter password"><br />
-    <input type="password" name="repeat_password" size="40" placeholder="enter password again">
-    ${(typeof errors['password_mismatch'] != 'undefined') ? errors['password_mismatch'] : ''}
-    <br />
-    <input type="email" name="email" size="40" placeholder="enter email"><br />
-    <input type="submit" value="Submit" id="submit">
-    </form>
-    </body>
-        `;
-    response.send(str);
-
-});
 
 
-app.post("/register", function (request, response) {
+app.post("/register.html", function (request, response) {
     let params = new URLSearchParams(request.query);
     // process a simple register form
+    // establishes blank errors so there is no undefined
+    var errors = {};
     username = request.body.username.toLowerCase();
     // check is username taken
     if (typeof users_reg_data[username] != 'undefined') {
-        errors['username_taken'] = `Hey! ${username} is already registered!`;
+        errors['username'] = `Hey! ${username} is already registered!`;
     }
     if (request.body.password != request.body.repeat_password) {
-        errors['password_mismatch'] = `Repeat password not the same as password!`;
+        errors['password'] = `Repeat password not the same as password!`;
     }
     if (request.body.username == '') {
-        errors['no_username'] = `You need to select a username!`;
+        errors['username'] = `You need to select a username!`;
     }
     if (request.body.password == '') {
-        errors['no_password'] = `You need a password!`;
+        errors['password'] = `You need a password!`;
     }
+    // if theres 0 errors, write data to reg file, and redirect to invoice
+    // otherwise if there are errors, send client back to register with data and error
     if (Object.keys(errors).length == 0) {
-        let errors = [];
+        delete errors;
         users_reg_data[username] = {};
         users_reg_data[username].password = request.body.password;
         users_reg_data[username].email = request.body.email;
+        users_reg_data[username].name = request.body.fullname;
         fs.writeFileSync(filename, JSON.stringify(users_reg_data));
         console.log("Saved User: " + request.body.username);
         //response.send(`${username} has been registered.`);
         params.append('username', request.body.username);
-        params.append('register', true);
         response.redirect(`./invoice.html?${params.toString()}`);
     } else {
-        response.redirect(`./register?${params.toString()}`);
-        let errors = [];
+        // code from help with proffesor
+        // if theres errors, send input and error data back to login page plus qs for products info
+        params.append('reg_data', JSON.stringify(request.body));
+        params.append('reg_errors', JSON.stringify(errors));
+        response.redirect(`./register.html?${params.toString()}`);
     }
 });
 // route all other GET requests to files in public 

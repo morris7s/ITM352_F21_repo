@@ -36,7 +36,7 @@
 }
 
 .right {
-    width: 50%;
+    width: 57%;
     padding: 30px;
 }
 
@@ -61,7 +61,6 @@
 .form-input label {
     color:darkred;
     font-size: 16px;
-    
     margin-bottom: 8px;
 }
 
@@ -88,16 +87,15 @@
 }
 
 .cta-container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    display:flex;
+    align-items: flex-start;
+    justify-content: space-evenly;
     margin-top: 10px;
 }
 
-.cta-container button,
-.cta-container a {
+.cta-container button {
     padding: 12px 18px;
-    width: 45%;
+    width: 30%;
     font-size: 14px;
 }
 
@@ -114,18 +112,7 @@
     outline: none;
 }
 
-.cta-container a {
-    border: none;
-    color: darkred;
-    border: 2px solid darkred;
-    border-radius: 4pc;
-    font-weight: bold;
-    text-decoration: none;
-    text-align: center;
-}
-
-.cta-container a:hover {
-    background-color: darkred;
-    color: white;
-    transition: all 0.3s ease-in;
+.span {
+    margin-bottom: 7px;
+    color: red;
 }
