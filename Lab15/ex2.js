@@ -42,10 +42,16 @@ app.get('/use_session', function(request, response){
 app.use(express.urlencoded({ extended: true })); // this takes the data from the form field (which is 'urlencoded'), it will decode the data out of the request, and puts it into a request.body for the POST 
 
 app.get("/login", function (request, response) {
+    // check if already logged in by seeing if client has username cookie
+    var welcome_str = 'Welcome! You need to login.';
+    if(typeof request.cookies.username != 'undefined') {
+        welcome_str = `Welcome ${request.cookies.username}! You last loged in on ${request.session['last login']}`;
+    }; 
     // if it gets a /login , it will generate 'this' function which is a login page
     // Give a simple login form
     str = `
             <body>
+            ${welcome_str}<br>
             <form action="" method="POST">
             <input type="text" name="username" size="40" placeholder="enter username" ><br />
             <input type="password" name="password" size="40" placeholder="enter password"><br />
@@ -60,32 +66,27 @@ app.post("/login", function (request, response) {
     // Process login form POST and redirect to logged in page if ok, back to login page if not
     let login_username = request.body['username'];
     let login_password = request.body['password'];
-    // check if username exists within the accounts
-    // as long as the entered usernmae exists, then we need to check if password entered matches the pass stored
+    //check if usernane exists, then check if password entered matches password stored
     if (typeof user_data[login_username] != 'undefined') {
-        // takes the stored password and checks if it matches with the inputed one
-        if (user_data[login_username]["password"] == login_password) {
+        if (user_data[login_username]['password'] == login_password) {
+           
             if (typeof request.session['last login'] != 'undefined'){
-                var last_login = request.session['last login'];
+                var last_login = request.session['last login']
             } else {
-                // request.session['last login'] = 'First time loggin in eh!';
-                var last_login = `First Login`;
+                var last_login = request.session['last login'] = 'first time logging in '  
             }
-            // putting login date into session
-            request.session['last login'] = new Date().toISOString();
-            response.send(`You last logged in on ${last_login}!`);
-            // if pass matches, this resonse is given
-            //response.send(`${login_username} is logged in`);
+            request.session['last login'] = new Date().toISOString() //put login date into session
+            response.cookie('username', login_username);
+            response.send(`You last logged in on ${last_login}`)
         }
         else {
-            // if pass doesn't match, this reponse is given
-            response.send(`Incorrect password for ${login_username}`);
+            response.send(`Incorrect password!`)
         }
     } else {
-        // if the inputed username doesn't exist, this response is given 
-        response.send(`${login_username} username does not exist`);
+        response.send(`User, ${login_username}, does not exist!`);
     }
-    response.send('processing login' + JSON.stringify(request.body));
+
+
 });
 
 app.get("/register", function (request, response) {
