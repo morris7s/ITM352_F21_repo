@@ -12,19 +12,27 @@
             products_data = JSON.parse(response);
         });
 
+        loadJSON('get_cart', function (response) {
+            // Parsing JSON string into object
+            shopping_cart = JSON.parse(response);
+            for (pk in shopping_cart) {
+                total += shopping_cart[pk].reduce((a, b) => a + b);
+            }
+        });
+
         // get the query string
         let params = (new URL(document.location)).searchParams;
         if (params.has('products_key')) {
             var products_key = params.get('products_key');
         } else {
-            document.write('no products key in query string, select a brand on the navigastion bar please');
+            document.write('no products key in query string, select a brand on the navigation bar please');
             document.stop;
         }
     </script>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Sean's Shoe Store</title>
 </head>
 
 <body>
@@ -35,34 +43,62 @@
     </div>
     <script>nav_bar(products_key, products_data);</script>
     <br>
+    <div class="title">
+        <h2>
+            <script>document.write(products_key + ' shoes')</script>
+        </h2>
+    </div>
     <script>
-        // This function will just display the product based on the key strin gin the query and show the correpsonding product 'BASED ON BRAND'
-        var display_str = `<h2>${products_key} shoes</h2><br>`;
+        // This function will just display the product based on the key string in the query and show the correpsonding product - based on the brand
+        var display_str = ``;
         // get the specific brand in order to display corresponding products
         products = products_data[products_key];
         // now to generate display divs
+        // start with the form so it isn't being generated
+        display_str += `<div class="items" style="display: inline;"><form action="/add_to_cart" method="get"><input type="hidden" name="products_key" value="${products_key}">`;
         for (i = 0; i < products.length; i++) {
             display_str += `
-            <form action="" method="POST">
-                <div class="item-box">
+            
+                <div class="item-box" style="width: 500px;">
                     <div class="product-info">
                         <img src=${products[i]['image']}>
                     <h3>${products[i]['name']}</h3>
                     <h3>$${products[i]['price']}</h3><br>
                         </div>
                     <div class="product-input">
-                        <h4><label id="${products[i]}_label"">How many? </label></h4>
-                        <input type="text" placeholder="${products[i]['quantity_available']} available" name="quantity${i}" onkeyup="checkQuantityTextbox(this);"><br><span class="span" id="${products[i]}_error"></span></div>
+                        <h4><label id="quantity${i}_label">How many? </label></h4>
+                        <input type="text" placeholder="${products[i]['quantity_available']} available" name="quantity${i}" onkeyup="checkQuantityTextbox(this);"><br><span class="span" id="quantity${i}_error"></span>
                         </div>
                     </div>
                 
             `;
         };
-        display_str += `<input type="hidden" name="products_key" value="${products_key}"> <input type="submit" class="button" value="Add to Cart" name="submit"></form>`;
-
+        display_str += `<input type="submit" class="button" value="Add to Cart" name="submit"></form></div>`;
         // Now to show display_str
         document.write(display_str);
     </script>
+    
 </body>
+<script>
+    // These functions are needed in order to check the inputs on product display page
+    // Taken from SmartPhoneProductsA!_Example from Assignment1 Module
+    // This function checks whether the inputs are NonNegInt
+    function isNonNegInt(q, return_errors = false) {
+        errors = []; // assume no errors at first
+        if (q == '') q = 0; // handle blank inputs as if they are 0
+        if (Number(q) != q) errors.push('<font color="red">Not a number!</font>'); // Check if string is a number value
+        else if (q < 0) errors.push('<font color="red">Negative value!</font>'); // Check if it is non-negative
+        else if (parseInt(q) != q) errors.push('<font color="red">Not an integer!</font>'); // Check that it is an integer
+        return return_errors ? errors : (errors.length == 0);
+    }
+
+    //This function looks at the textbox and shows if the input is not valid
+    function checkQuantityTextbox(theTextbox) {
+        errs = isNonNegInt(theTextbox.value, true);
+        if (errs.length == 0) errs = ['You want:'];
+        if (theTextbox.value.trim() == '') errs = ['How many? '];
+        document.getElementById(theTextbox.name + '_label').innerHTML = errs.join(", ");
+    }
+</script>
 
 </html>
