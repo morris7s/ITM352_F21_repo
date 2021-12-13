@@ -77,6 +77,7 @@ app.get("/add_to_cart", function (request, response) {
     var quantities = request.query[`quantity${i}`].map(Number); // Get quantities from the form post and convert strings from form post to numbers
     }
     request.session.cart[products_key] = quantities; // store the quantities array in the session cart object with the same products_key.
+    // redirect user back to products display once items are added to the cart
     response.redirect('./products_display.html' + `?products_key=${products_key}`);
 });
 
