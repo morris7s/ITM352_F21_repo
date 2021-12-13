@@ -71,14 +71,54 @@ app.post("/products_display.html", function (request, response){
 // Then it will be stored in the cart
 // This will then redirect the user back to the products display page
 // I want to add an alert or something to show the user they added their items to the cart
-app.get("/add_to_cart", function (request, response) {
-    var products_key = request.query['products_key']; // get the product key sent from the form post
-    for (i in products_data[products_key].length) {
-    var quantities = request.query[`quantity${i}`].map(Number); // Get quantities from the form post and convert strings from form post to numbers
+app.post("/add_to_cart", function (request, response) {
+    // code below got inspiration from Brandon Marcos
+    console.log(request.body);
+    let params = new URLSearchParams(request.body);
+    // turn request body into usable variables
+    var product_key = request.body['products_key'];
+    var quantity_submit = request.body['quantity'];
+
+    // assume 0 errors
+    var errors ={};
+
+    // now to validate the submitted quantities
+    // This checks for whether it passes the isNonNegInt or if we have quantities available or not
+    for (i in products_data[product_key]) {
+        let q = quantity_submit[i];
+        if (isNonNegInt(q) == false) {
+            errors[`quantity[${i}]`] = `${q} is not a valid quantity TEST`;
+        } else {
+            if (q > products_data[product_key][i]['quantity_available']) {
+                errors[`quantity[${i}]`] = `We dont have that many TEST`;
+            }
+        }
     }
-    request.session.cart[products_key] = quantities; // store the quantities array in the session cart object with the same products_key.
-    // redirect user back to products display once items are added to the cart
-    response.redirect('./products_display.html' + `?products_key=${products_key}`);
+
+    // if there arent any errors, then we add it to the cart via sessions
+    // if there are errors, we send them back to the product page with their errors and quantity data
+    // gonna be using the request body as the data to send back to and add errors into it
+    if (Object.keys(errors).length === 0) {
+        if (typeof request.session.cart == 'undefined') {
+            // establishes a cart if there isn't one in the session
+            request.session.cart = {};
+        }
+        if (typeof request.session.cart[product_key] == 'undefined') {
+            // this creates an array in the cart based on the product_key and fills the entirety of it with 0
+            request.session.cart[product_key] = new Array(quantity_submit.length).fill(0);
+        }
+        for (i in request.session.cart[product_key]) {
+            // this adds the submitted quantities to the array based on the product key
+            request.session.cart[product_key][i] += Number(quantity_submit[i]);
+        }
+    } else {
+        // this is for when theres errors, takes the qty data and error data and puts it into the params and sends it back
+        // this code comes from my assignment 2, when I got help from proffesor Port
+        params.append('qty_data', JSON.stringify(request.body));
+        params.append('qty_errors', JSON.stringify(errors));
+    }
+    console.log('Cart Info:' + request.session.cart);
+    response.redirect('./products_display.html?' + `${params.toString()}`);
 });
 
 // Taken from assignment 3 code examples

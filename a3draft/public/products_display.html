@@ -29,6 +29,38 @@
             document.stop;
         }
     </script>
+    <script>
+        // This code is taken from assignment 2 registration errors, from when I got help with professor
+        // Just modifying it to work on products this time
+        // Only because I previously shown the errors at the top of the page, but this time I want it to appear near the product
+        window.onload = function () {
+            let params = (new URL(document.location)).searchParams;
+            console.log(params);
+            console.log(location.search);
+            // For below, if theres errors in the qs, it takes it and puts it in the appropriate span...
+            if (params.has('qty_errors')) {
+                var errors = JSON.parse(params.get('qty_errors'));
+                var qty_data = JSON.parse(params.get('qty_data'));
+
+                for (i in products_data[products_key]) {
+                    // put back qty-data back into the form to make it sticky
+                    // document.getElementById(`quantity[${i}]`).value = qty_data[`quantity[${i}]`];
+                    // if theres an error for the input name/quantity, put the error into the corresponding span
+                    if (typeof errors[`quantity[${i}]`] != 'undefined') {
+                        document.getElementById(`quantity[${i}]` + '_error').innerHTML = errors[`quantity[${i}]`];
+                    }
+                    // if there is no error, turn the error blank to not show anything
+                    if (typeof errors[`quantity[${i}]`] == 'undefined') {
+                        document.getElementById(`quantity[${i}]` + '_error').innerHTML = " ";
+                    }
+                    if (errors == 'undefined') {
+                        let errors = {}
+                    }
+                    console.log(errors[`quantity[${i}]`]);
+                }
+            }            
+        }
+    </script>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -55,7 +87,7 @@
         products = products_data[products_key];
         // now to generate display divs
         // start with the form so it isn't being generated
-        display_str += `<div class="items" style="display: inline;"><form action="/add_to_cart" method="get"><input type="hidden" name="products_key" value="${products_key}">`;
+        display_str += `<div class="items" style="display: inline;"><form action="/add_to_cart" method="POST"><input type="hidden" name="products_key" value="${products_key}">`;
         for (i = 0; i < products.length; i++) {
             display_str += `
             
@@ -66,8 +98,8 @@
                     <h3>$${products[i]['price']}</h3><br>
                         </div>
                     <div class="product-input">
-                        <h4><label id="quantity${i}_label">How many? </label></h4>
-                        <input type="text" placeholder="${products[i]['quantity_available']} available" name="quantity${i}" onkeyup="checkQuantityTextbox(this);"><br><span class="span" id="quantity${i}_error"></span>
+                        <h4><label id="quantity[${i}]_label">How many? </label></h4>
+                        <input type="text" placeholder="${products[i]['quantity_available']} available" name="quantity[${i}]" id="quantity[${i}]" onkeyup="checkQuantityTextbox(this);"><br><span class="span" id="quantity[${i}]_error"></span>
                         </div>
                     </div>
                 
@@ -77,7 +109,7 @@
         // Now to show display_str
         document.write(display_str);
     </script>
-    
+
 </body>
 <script>
     // These functions are needed in order to check the inputs on product display page
