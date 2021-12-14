@@ -35,9 +35,11 @@ p{
 .row{
     display: flex;
     flex-wrap: wrap;
+    align-content: center;
 }
 .col-6{
-    width: 50%;
+    width: auto;
+    text-align: center;
     flex: 0 0 auto;
 }
 .text-white{

@@ -4,6 +4,7 @@
 <head>
     <script>// Code below taken from Assignmnet 3 code examples</script>
     <script src="./functions.js"></script>
+    <script src="/session_data.js"></script>
     <script>
         var products_data;
         var total = 0;
@@ -17,6 +18,13 @@
             shopping_cart = JSON.parse(response);
             for (pk in shopping_cart) {
                 total += shopping_cart[pk].reduce((a, b) => a + b);
+            }
+        });
+        //taken from port's example
+        loadJSON('get_cart', function (response) {
+            cart_info = JSON.parse(response);
+            for (product_key in cart_info) {
+                total += cart_info[product_key].reduce((a, b) => a + b);
             }
         });
 
@@ -72,9 +80,28 @@
         <div class="banner-center" style="background-color: black;color: mintcream;">
             <h1>Sean's Shoe Store</h1>
         </div>
+        <div class="banner-right" style="color: mintcream;">
+            ☰<a href="./cart.html">View Cart</a>
+        </div>
     </div>
     <script>nav_bar(products_key, products_data);</script>
     <br>
+    <script>
+        // This is to print out whether the user can log in or not
+        // If there is no username in the session, we generate a log in button
+        // If there IS a username, I want to display the username and a logout button
+        // Now I should also implement a way to show number of items in the cart but maybe later
+        if (typeof user_name == 'undefined'){
+            document.write(`<div id="login_box">
+                Hey You havn't logged in yet <br> <a href="./login.html?products_key=jordan"> Login Here</a>
+                </div>`)
+        } else {
+            document.write(`<div id="login_box">
+                Hey ${user_name} <br> <a href="/logout"> Logout</a>
+                </div>`)
+        }
+    </script>
+
     <div class="title">
         <h2>
             <script>document.write(products_key + ' shoes')</script>

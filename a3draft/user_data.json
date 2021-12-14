@@ -1,17 +1,1 @@
-{
-    "dport": {
-        "name": "Dan Port",
-        "password": "portspassword",
-        "email": "dport@hawaii.edu"
-    },
-    "itm352": {
-        "name": "Grader Last",
-        "password": "grader",
-        "email": "grader@hawaii.edu"
-    },
-    "theboymako": {
-        "password": "password",
-        "email": "seanmorris@gmail.com",
-        "name": "Sean Morris"
-    }
-}
+{"dport":{"name":"Dan Port","password":"portspassword","email":"dport@hawaii.edu"},"itm352":{"name":"Grader Last","password":"grader","email":"grader@hawaii.edu"},"theboymako":{"password":"password","email":"seanmorris@gmail.com","name":"Sean Morris"},"qqqqqq":{"password":"wwwwwww","email":"wwe@gmail.com","name":"sean morris"},"wwwwwww":{"password":"wwwwwww","email":"wwe@gmail.com","name":"sean morris"},"iamhappy":{"password":"qqqqqqq","email":"wwe@gmail.com","name":"mister happy"},"qqreqwerqw":{"password":"qqqqqqq","email":"qwe@email.com","name":"safdsadfsadf"},"seansean":{"password":"aaaaaaa","email":"aaa@gmail.com","name":"asdasdasdasd"},"asdasdasd":{"password":"aaaaaaa","email":"aaa@gmail.com","name":"asdasdasda"},"eeeeeee":{"password":"qqqqqqq","email":"email@y.com","name":"eeeeee"},"ddddddd":{"password":"qqqqqqq","email":"qwe@email.com","name":"qqqq"},"uuuuuuuu":{"password":"iiiiiii","email":"ieo@eo.com","name":"iii iiiii"},"sssssss":{"password":"aaaaaaa","email":"aaa@gmail.com","name":"sss ssss"}}

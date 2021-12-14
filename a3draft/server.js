@@ -11,6 +11,10 @@ var products_data = require('./products.json');
 app.use(express.urlencoded({ extended: true }));
 app.use(session({ secret: "MySecretKey", resave: true, saveUninitialized: true }));
 
+// Taken from https://mailtrap.io/blog/nodemailer-gmail/
+// this is requires the nodemailer package
+const nodemailer = require('nodemailer');
+
 // 3 codes below taken from assignment 2, just takes the user_reg_data and gives it to the server
 // gets the user data and puts that into a variable to use to give to pages
 var all_user_data = require('./user_data.json');
@@ -42,28 +46,6 @@ app.post("/get_products_data", function (request, response) {
     response.json(products_data);
 });
 
-app.post("/products_display.html", function (request, response){
-    // this is used to redirect back to products display by reattaching the query that has the product key in it
-    let params = new URLSearchParams(request.query);
-    let paramsstring = params.toString();
-    //using this console to see what the req body is
-    console.log(request.body);
-    // This must take the quanitities and put it into the cart based on the product_key
-    // Turn POST request into a variable
-    let reqbody = request.body;
-    let brand = request.body['products_key'];
-    // use a for function to get the quantities for specific brand
-    for (i in products_data[brand]) {
-        reqbodyi = reqbody['quantity' + i];
-        let quantity_str = reqbodyi;
-        console.log(quantity_str);
-        if (reqbodyi > 0) {
-           request.session.cart[brand] = '';
-        }
-    };
-    // Redirect user back to products display after adding items to cart
-    response.redirect(`./products_display.html?${paramsstring}`);
-})
 
 // Taken from assignment 3 code examples
 // This is for when a user wants to add items to the cart from the products_display page
@@ -80,17 +62,17 @@ app.post("/add_to_cart", function (request, response) {
     var quantity_submit = request.body['quantity'];
 
     // assume 0 errors
-    var errors ={};
+    var errors = {};
 
     // now to validate the submitted quantities
     // This checks for whether it passes the isNonNegInt or if we have quantities available or not
     for (i in products_data[product_key]) {
         let q = quantity_submit[i];
         if (isNonNegInt(q) == false) {
-            errors[`quantity[${i}]`] = `${q} is not a valid quantity TEST`;
+            errors[`quantity[${i}]`] = `${q} is not a valid quantity!`;
         } else {
             if (q > products_data[product_key][i]['quantity_available']) {
-                errors[`quantity[${i}]`] = `We dont have that many TEST`;
+                errors[`quantity[${i}]`] = `We don't ${q} in stock!`;
             }
         }
     }
@@ -117,15 +99,11 @@ app.post("/add_to_cart", function (request, response) {
         params.append('qty_data', JSON.stringify(request.body));
         params.append('qty_errors', JSON.stringify(errors));
     }
-    console.log('Cart Info:' + request.session.cart);
+    console.log(request.session);
     response.redirect('./products_display.html?' + `${params.toString()}`);
 });
 
-// Taken from assignment 3 code examples
-// If there's a get request to retreive cart info '/get_cart', this will respond with the json data
-app.get("/get_cart", function (request, response) {
-    response.json(request.session.cart);
-});
+
 
 app.post("/login.html", function (request, response) {
     let params = new URLSearchParams(request.query);
@@ -150,13 +128,18 @@ app.post("/login.html", function (request, response) {
             errors['password'] = `Password incorrect`;
         }
     }
-    // Now that I generated errors for certain login failures, I need a way to send it back to the login page to show the error and let client re-enter user and pass
-    // BUT, if there is an error, we take that error, add it to the qs, and then redirect back to login with said errors 
+
+    // Now that the errors are generated, if there ARE errors:
+    // Get the errors, put them in the qs and return back to login with the errors
+    // If there are NO errors, we take the username, full name and email and put them into the session
     if (Object.keys(errors).length == 0) {
-        // if there are 0 errors, meaning login works , we send client to invoice with the username in the query
+        // if there are 0 errors, meaning login works , we take the username, full name and email and put them into the session
         delete errors;
-        params.append('username', username);
-        response.redirect(`./invoice.html?${params.toString()}`);
+        request.session['username'] = username;
+        request.session['email'] = all_user_data[username].email;
+        request.session['full_name'] = all_user_data[username].name;
+        console.log(request.session);
+        response.redirect(`./products_display.html?products_key=jordan`)
     } else {
         // if theres errors, send input and error data back to login page plus qs for products info
         params.append('login_data', JSON.stringify(request.body));
@@ -164,6 +147,218 @@ app.post("/login.html", function (request, response) {
         response.redirect(`./login.html?${params.toString()}`);
     }
 });
+
+// this is to transfer from login page to register page
+// Only doing this because I am too lazy to change other things and just roll with what I have from assignment 2
+app.post("/reg", function (request, response) {
+    let params = new URLSearchParams(request.query);
+    response.redirect('./register.html?' + params);
+})
+
+// this is to process all register info coming in 
+// If there are 0 errors, just redirect to product display page
+// If there ARE errors, send back to register page with errors
+// a lot of this is from assignment 2, just being modifying some parts
+app.post("/register.html", function (request, response) {
+    let params = new URLSearchParams(request.query);
+    console.log(request.body);
+    // process a simple register form
+    // establishes blank errors so there is no undefined
+    // alot of this code comes from RegEx, Brandon Jude from class, and https://www.w3resource.com/javascript/form/javascript-sample-registration-form-validation.php - found from assignment2 tutorial
+    var errors = {};
+    // establish req.body inputs as variables
+    username = request.body['username'].toLowerCase();
+    password = request.body['password'];
+    fullname = request.body['fullname'];
+    repeat_password = request.body['repeat_password'];
+    email = request.body['email'];
+
+
+    // below are checks for username
+    // plan on organizing validation from most complex to least to give the most accurate error
+    // check if username input is entered
+    if (request.body.username == '') {
+        errors['username'] = `You need to enter a username!`;
+    }
+    // check is username taken
+    if (typeof users_reg_data[username] != 'undefined') {
+        errors['username'] = `Hey! ${username} is already taken!`;
+    }
+    // if username meets character length requirement < 4
+    if (username.length < 4) {
+        errors['username'] = `Username must be longer than 4 characters`;
+    }
+    // if username meets character length requirement > 10
+    if (username.length > 10) {
+        errors['username'] = `Username has maximum of 10 characters`;
+    }
+    // need to check if username has special characters
+    // add special characters to a variable
+    var badcharacters = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/? ]+/;
+    var badcharacters_username = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
+    if (username.match(badcharacters_username)) {
+        errors['username'] = `Username must have letters and numbers only`;
+    }
+    // now to check passwords
+    // check if password matches repeat password
+    if (request.body.password != request.body.repeat_password) {
+        errors['password'] = `Repeat password not the same as password!`;
+        errors['repeat_password'] = `Repeat password not the same as password!`;
+    }
+
+    // check if password is 6 characters or less
+    if (password.length < 6) {
+        errors['password'] = `Password must have a minimum of 6 characters`;
+    }
+    // check if theres a password input
+    if (request.body.password == '') {
+        errors['password'] = `You need a password!`;
+    }
+    //now to check email
+    // taken from https://www.w3resource.com/javascript/form/javascript-sample-registration-form-validation.php
+    var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    if (email.match(mailformat)) {
+    } else {
+        errors['email'] = `must enter a valid email without special characters`;
+    }
+
+    // now to check full name
+    // only allows letters and max of 30 characters
+    // var lettersonly = /^[A-Za-z]+$/;
+    if (fullname.length < 31) {
+    } else {
+        errors['fullname'] = `Full name must be letters only and less than 30 characters`;
+    }
+    // if theres 0 errors, write data to reg file, and redirect to invoice
+    // otherwise if there are errors, send client back to register with data and error
+    // so basically, im gonna assume errors for each one in order to try get rid of undefined popping up, plus its an eye sore
+    if (Object.keys(errors).length === 0) {
+        console.log(errors);
+        delete errors;
+        users_reg_data[username] = {};
+        users_reg_data[username].password = request.body.password;
+        users_reg_data[username].email = request.body.email;
+        users_reg_data[username].name = request.body.fullname;
+        fs.writeFileSync(filename, JSON.stringify(users_reg_data));
+        console.log("Saved User: " + request.body.username);
+
+        request.session['username'] = username;
+        request.session['email'] = email;
+        request.session['full_name'] = fullname;
+        console.log(request.session);
+        response.redirect(`./products_display.html?products_key=jordan`);
+    } else {
+        // code from help with proffesor
+        // if theres errors, send input and error data back to login page plus qs for products info
+        params.append('reg_data', JSON.stringify(request.body));
+        params.append('reg_errors', JSON.stringify(errors));
+        response.redirect(`./register.html?${params.toString()}`);
+    }
+});
+
+// Taken from assignment 3 code examples
+// If there's a get request to retreive cart info '/get_cart', this will respond with the json data
+app.post("/get_cart", function (request, response) {
+    response.json(request.session.cart);
+});
+
+// This is a get to the session data
+// This will be used when ever a site needs to get info from the session like the cart or usrname
+app.get("/session_data.js", function (request, response, next) {
+    response.type('.js');
+    // declare a shopping cart if there isn't one
+    if (typeof request.session.cart == 'undefined') {
+        request.session.cart = {};
+    }
+    // now to declare the username, email, name 
+    // Gonna keep all the data into one long Javascript string with the data as variables
+    var session_str = `var user_name = ${JSON.stringify(request.session.username)}; var full_name = ${JSON.stringify(request.session.full_name)}; var user_email = ${JSON.stringify(request.session.email)}; var cart_data = ${JSON.stringify(request.session.cart)};`;
+    // send the client the session string
+    response.send(session_str);
+})
+
+// This is for when the user clicks log out
+// destorys the session data and sends user back to homepage
+// may be utilized for something else
+app.get("/logout", function (request, response, next) {
+    request.session.destroy();
+    console.log(request.session);
+    response.redirect('./');
+});
+
+// This is to update the cart info
+// Will take the request body from the post and update the cart data with it
+// not worried about invalid quantities as they can only select how much they want, not type it in
+app.post("/cart_update", function (request, response, next) {
+    console.log(request.body);
+    for (product_key in request.session.cart) {
+        for (i in request.session.cart[product_key]) {
+            // this is to basically skip quantities that are 0
+            // because if there is a 0, it creates a blank field in the cart, and thats an error
+            if (request.session.cart[product_key][i] == 0) {
+                continue;
+            }
+            request.session.cart[product_key][i] = Number(request.body[`cart_update_${product_key}_${i}`]);
+        }
+    }
+    console.log(request.session);
+    response.redirect("./cart.html");
+})
+
+// This is used to process the checkout
+app.post("/cart_checkout", function (request, response) {
+    // gotta check if there is a username in the session
+    // if there isn't a username, just redirect to the cart page with an error
+    // if there IS a username, just do the mail stuff and redirect to invoice page
+    if (typeof request.session.username == 'undefined') {
+        console.log(`NOTfound a username`);
+        response.redirect('/cart.html?NotLoggedIn');
+    } else {
+    console.log(`found a username`);
+    // Generate HTML invoice string
+    var invoice_str = `Thank you for your order!<table border><th>Quantity</th><th>Item</th>`;
+    var shopping_cart = request.session.cart;
+    for (product_key in products_data) {
+        for (i = 0; i < products_data[product_key].length; i++) {
+            if (typeof shopping_cart[product_key] == 'undefined') continue;
+            qty = shopping_cart[product_key][i];
+            if (qty > 0) {
+                invoice_str += `<tr><td>${qty}</td><td>${products_data[product_key][i].name}</td><tr>`;
+            }
+        }
+    }
+    invoice_str += '</table>';
+
+    // taken from https://mailtrap.io/blog/nodemailer-gmail/
+    // basically lets you send messages from gmail server instead of using UH's like in the example
+    // need to declare the users email
+    var user_email = request.session.email;
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: '2019morriss@kalanihs.org',
+          pass: 'zqQTddkeftRvZxwj'
+        }
+      });
+      
+      const mailOptions = {
+        from: 'seanshoestore@kicks.com',
+        to: user_email,
+        subject: `Thank You for Your Order ${request.session.full_name}- Sean's Shoe Store`,
+        html: invoice_str
+      };
+      
+      transporter.sendMail(mailOptions, function(error, info){
+        if (error) {
+            invoice_str += '<br>There was an error and your invoice could not be emailed :(';
+        } else {
+            invoice_str += `<br>Your invoice was mailed to ${user_email}`;
+        }
+        response.redirect(`./invoice.html`);
+      });
+    };
+
+})
 
 app.use(express.static('./public'));
 app.listen(8080, () => console.log(`listening on port 8080`));
