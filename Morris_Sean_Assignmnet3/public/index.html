@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script>// Code below taken from Assignmnet 3 code examples</script>
+    <script src="./functions.js"></script>
+    <script>
+        var products_data;
+        loadJSON('get_products_data', function (response) {
+            // Parsing JSON string into object
+            products_data = JSON.parse(response);
+        });
+        var this_product_key = ''
+    </script>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sean's Shoe Store</title>
+</head>
+
+<body>
+    <h1>Sean's Shoe Store</h1>
+    <h2>Find all the coolest sneakers here!</h2>
+    <h2>What brand are you looking for?</h2><br>
+<script> nav_bar(this_product_key, products_data);</script>
+</body>
+
+</html>

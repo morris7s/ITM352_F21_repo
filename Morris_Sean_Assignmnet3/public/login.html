@@ -1,0 +1,67 @@
+<script>
+    // got idea from https://www.youtube.com/watch?v=jaUb_0zWIUQ to make a login page look nice
+</script>
+<script src="./products.js" type="text/javascript"></script>
+<script>
+    window.onload = function() {
+    let params = (new URL(document.location)).searchParams;
+    console.log(location.search);
+    // This is for when the URl has errors, it will alert the user with the specific error
+    if (params.has('login_errors')) {
+        var errors = JSON.parse(params.get('login_errors'));
+        var login_data = JSON.parse(params.get('login_data'));
+        for (input_name in login_data) {
+            // put bakc login data into form field
+            document.getElementById(input_name).value = login_data[input_name];
+            // if theres an error for this input name, put into corresponding span
+            if (typeof errors[input_name] != 'undefined') {
+                document.getElementById(input_name + '_error').innerHTML = errors[input_name];
+            }
+            if (typeof errors[input_name] == 'undefined') {
+                document.getElementById(input_name + '_error').innerHTML = " ";
+            }
+        }
+    }};
+</script>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./css/login-style.css">
+    <title>Login</title>
+</head>
+
+<body>
+    <div class="container">
+        <div class="login-container">
+            <div class="left"></div>
+            <div class="right">
+                <h1>Welcome!</h1>
+                <p>Please login to your account.</p>
+                <script>document.write(`<form action="${location.search}" method="POST">`)</script>
+                <div class="form-input">
+                    <label for="username">Username</label><span class="span" id="username_error"></span>
+                    <input type="text" id="username" name="username" size="20" placeholder="Username">
+                </div>
+                <div class="form-input">
+                    <label for="username">Password</label><span class="span" id="password_error"></span>
+                    <input type="password" id="password" name="password" size="20" placeholder="Password">
+                </div>
+                <div class="cta-container">
+                    <button class="sign-in">Sign In</button>
+                </form>
+                <script>document.write(`<form action="/reg${location.search}" method="POST">`)</script>
+                    <button id="register" class="register">Register</button>
+                </form>
+                </div>
+                
+                
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

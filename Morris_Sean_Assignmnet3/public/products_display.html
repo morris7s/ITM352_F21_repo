@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script>// Code below taken from Assignmnet 3 code examples</script>
+    <script src="./functions.js"></script>
+    <script src="/session_data.js"></script>
+    <script>
+        var products_data;
+        var total = 0;
+        loadJSON('get_products_data', function (response) {
+            // Parsing JSON string into object
+            products_data = JSON.parse(response);
+        });
+
+        loadJSON('get_cart', function (response) {
+            // Parsing JSON string into object
+            shopping_cart = JSON.parse(response);
+            for (pk in shopping_cart) {
+                total += shopping_cart[pk].reduce((a, b) => a + b);
+            }
+        });
+        //taken from port's example
+        loadJSON('get_cart', function (response) {
+            cart_info = JSON.parse(response);
+            for (product_key in cart_info) {
+                total += cart_info[product_key].reduce((a, b) => a + b);
+            }
+        });
+
+        // get the query string
+        let params = (new URL(document.location)).searchParams;
+        if (params.has('products_key')) {
+            var products_key = params.get('products_key');
+        } else {
+            document.write('no products key in query string, select a brand on the navigation bar please');
+            document.stop;
+        }
+    </script>
+    <script>
+        // This code is taken from assignment 2 registration errors, from when I got help with professor
+        // Just modifying it to work on products this time
+        // Only because I previously shown the errors at the top of the page, but this time I want it to appear near the product
+        window.onload = function () {
+            let params = (new URL(document.location)).searchParams;
+            console.log(params);
+            console.log(location.search);
+            // For below, if theres errors in the qs, it takes it and puts it in the appropriate span...
+            if (params.has('qty_errors')) {
+                var errors = JSON.parse(params.get('qty_errors'));
+                var qty_data = JSON.parse(params.get('qty_data'));
+
+                for (i in products_data[products_key]) {
+                    // put back qty-data back into the form to make it sticky
+                    // document.getElementById(`quantity[${i}]`).value = qty_data[`quantity[${i}]`];
+                    // if theres an error for the input name/quantity, put the error into the corresponding span
+                    if (typeof errors[`quantity[${i}]`] != 'undefined') {
+                        document.getElementById(`quantity[${i}]` + '_error').innerHTML = errors[`quantity[${i}]`];
+                    }
+                    // if there is no error, turn the error blank to not show anything
+                    if (typeof errors[`quantity[${i}]`] == 'undefined') {
+                        document.getElementById(`quantity[${i}]` + '_error').innerHTML = " ";
+                    }
+                    if (errors == 'undefined') {
+                        let errors = {}
+                    }
+                    console.log(errors[`quantity[${i}]`]);
+                }
+            }            
+        }
+    </script>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sean's Shoe Store</title>
+</head>
+
+<body>
+    <div class="banner" style="background-color: black;">
+        <div class="banner-center" style="background-color: black;color: mintcream;">
+            <h1>Sean's Shoe Store</h1>
+        </div>
+        <div class="banner-right" style="color: mintcream;">
+            ☰<a href="./cart.html">View Cart</a>
+        </div>
+    </div>
+    <script>nav_bar(products_key, products_data);</script>
+    <br>
+    <script>
+        // This is to print out whether the user can log in or not
+        // If there is no username in the session, we generate a log in button
+        // If there IS a username, I want to display the username and a logout button
+        // Now I should also implement a way to show number of items in the cart but maybe later
+        if (typeof user_name == 'undefined'){
+            document.write(`<div id="login_box">
+                Hey You havn't logged in yet <br> <a href="./login.html?products_key=jordan"> Login Here</a>
+                </div>`)
+        } else {
+            document.write(`<div id="login_box">
+                Hey ${user_name} <br> <a href="/logout"> Logout</a>
+                </div>`)
+        }
+    </script>
+
+    <div class="title">
+        <h2>
+            <script>document.write(products_key + ' shoes')</script>
+        </h2>
+    </div>
+    <script>
+        // This function will just display the product based on the key string in the query and show the correpsonding product - based on the brand
+        var display_str = ``;
+        // get the specific brand in order to display corresponding products
+        products = products_data[products_key];
+        // now to generate display divs
+        // start with the form so it isn't being generated
+        display_str += `<div class="items" style="display: inline;"><form action="/add_to_cart" method="POST"><input type="hidden" name="products_key" value="${products_key}">`;
+        for (i = 0; i < products.length; i++) {
+            display_str += `
+            
+                <div class="item-box" style="width: 500px;">
+                    <div class="product-info">
+                        <img src=${products[i]['image']}>
+                    <h3>${products[i]['name']}</h3>
+                    <h3>$${products[i]['price']}</h3><br>
+                        </div>
+                    <div class="product-input">
+                        <h4><label id="quantity[${i}]_label">How many? </label></h4>
+                        <input type="text" placeholder="${products[i]['quantity_available']} available" name="quantity[${i}]" id="quantity[${i}]" onkeyup="checkQuantityTextbox(this);"><br><span class="span" id="quantity[${i}]_error"></span>
+                        </div>
+                    </div>
+                
+            `;
+        };
+        display_str += `<input type="submit" class="button" value="Add to Cart" name="submit"></form></div>`;
+        // Now to show display_str
+        document.write(display_str);
+    </script>
+
+</body>
+<script>
+    // These functions are needed in order to check the inputs on product display page
+    // Taken from SmartPhoneProductsA!_Example from Assignment1 Module
+    // This function checks whether the inputs are NonNegInt
+    function isNonNegInt(q, return_errors = false) {
+        errors = []; // assume no errors at first
+        if (q == '') q = 0; // handle blank inputs as if they are 0
+        if (Number(q) != q) errors.push('<font color="red">Not a number!</font>'); // Check if string is a number value
+        else if (q < 0) errors.push('<font color="red">Negative value!</font>'); // Check if it is non-negative
+        else if (parseInt(q) != q) errors.push('<font color="red">Not an integer!</font>'); // Check that it is an integer
+        return return_errors ? errors : (errors.length == 0);
+    }
+
+    //This function looks at the textbox and shows if the input is not valid
+    function checkQuantityTextbox(theTextbox) {
+        errs = isNonNegInt(theTextbox.value, true);
+        if (errs.length == 0) errs = ['You want:'];
+        if (theTextbox.value.trim() == '') errs = ['How many? '];
+        document.getElementById(theTextbox.name + '_label').innerHTML = errs.join(", ");
+    }
+</script>
+
+</html>

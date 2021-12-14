@@ -1,0 +1,106 @@
+{
+    "jordan": [
+        {
+            "name": "Dior x Air Jordan 1 High",
+            "price": 8600.00,
+            "image": "./images/shoe0.png",
+            "quantity_available": 2
+        },
+        {
+            "name": "Air Jordan 1 Retro High 'Chicago'",
+            "price": 1499.00,
+            "image": "./images/shoe1.png",
+            "quantity_available": 10
+        },
+        {
+            "name": "Air Jordan 12 Utility 'Grind'",
+            "price": 199.00,
+            "image": "./images/shoe2.png",
+            "quantity_available": 20
+        },
+        {
+            "name": "Off-White x Wmns Air Jordan 4 SP 'Sail'",
+            "price": 1599.00,
+            "image": "./images/shoe3.png",
+            "quantity_available": 8
+        }
+    ],
+    "nike": [
+        {
+            "name": "Air Force 1 '07 'Triple White'",
+            "price": 99.00,
+            "image": "./images/shoe4.png",
+            "quantity_available": 20
+        },
+        {
+            "name": "Dunk Low PS 'University Blue'",
+            "price": 149.00,
+            "image": "./images/shoe5.png",
+            "quantity_available": 15
+        },
+        {
+            "name": "Zoom Kobe 6 Protro 'Grinch'",
+            "price": 1124.00,
+            "image": "./images/shoe6.png",
+            "quantity_available": 24
+        },
+        {
+            "name": "Dunk High SB 'Strawberry Cough'",
+            "price": 289.00,
+            "image": "./images/shoe7.png",
+            "quantity_available": 5
+        }
+    ],
+    "yeezy": [
+        {
+            "name": "Yeezy Foam Runner 'Vermilion'",
+            "price": 250.00,
+            "image": "./images/shoe8.png",
+            "quantity_available": 11
+        },
+        {
+            "name": "Yeezy Boost 350 V2 'Blue Tint'",
+            "price": 399.00,
+            "image": "./images/shoe9.png",
+            "quantity_available": 7
+        },
+        {
+            "name": "Yeezy Slide 'Glow Green'",
+            "price": 209.00,
+            "image": "./images/shoe10.png",
+            "quantity_available": 20
+        },
+        {
+            "name": "Yeezy Boost 380 'Alien Blue'",
+            "price": 299.00,
+            "image": "./images/shoe11.png",
+            "quantity_available": 14
+        }
+    ],
+    "adidas": [
+        {
+            "name": "UltraBoost 4.0 'Core Black'",
+            "price": 129.00,
+            "image": "./images/shoe12.png",
+            "quantity_available": 19
+        },
+        {
+            "name": "HUMAN MADE x Pharrell x NMD Hu 'Love'",
+            "price": 420.00,
+            "image": "./images/shoe13.png",
+            "quantity_available": 9
+        },
+        {
+            "name": "Trae Young 1 'ICEE'",
+            "price": 169.00,
+            "image": "./images/shoe14.png",
+            "quantity_available": 20
+        },
+        {
+            "name": "Kerwin Frost x Forum Low 'Benchmates'",
+            "price": 279.00,
+            "image": "./images/shoe15.png",
+            "quantity_available": 8
+        }
+    ]
+}
