@@ -316,18 +316,77 @@ app.post("/cart_checkout", function (request, response) {
     } else {
     console.log(`found a username`);
     // Generate HTML invoice string
-    var invoice_str = `Thank you for your order!<table border><th>Quantity</th><th>Item</th>`;
+    var invoice_str = `Thank you for your order!<br><table border="2px">
+    <thead>
+        <th>
+            Shoe
+        </th>
+        <th>
+            Quantity
+        </th>
+        <th>
+            Price
+        </th>
+        <th>
+            Extended Price
+        </th>
+    </thead>`;
     var shopping_cart = request.session.cart;
+    let subtotal = 0;
+    // need to get total from qs
+    // having trouble with getting shopping cart total from the cart itself
+    let params = new URLSearchParams(request.query);
+
+    if (params.has('total')) {
+        var total = params.get('total');
+    }
+    console.log(total);
+    let total_quantity = total;
+
     for (product_key in products_data) {
         for (i = 0; i < products_data[product_key].length; i++) {
             if (typeof shopping_cart[product_key] == 'undefined') continue;
             qty = shopping_cart[product_key][i];
             if (qty > 0) {
-                invoice_str += `<tr><td>${qty}</td><td>${products_data[product_key][i].name}</td><tr>`;
+                extended_price = products_data[product_key][i]['price'] * qty;
+                subtotal = subtotal + extended_price;
+                invoice_str += `<tr>
+                <td>
+                    ${products_data[product_key][i]['name']}
+                </td>
+                <td>
+                ${qty}
+                </td>
+                <td>
+                    $${products_data[product_key][i]['price']}
+                </td>
+                <td>$${extended_price.toFixed(2)}</td>
+            </tr>`;
             }
         }
     }
-    invoice_str += '</table>';
+
+    var tax_rate = 0.045;
+        var salestax = tax_rate * subtotal;
+
+        // Compute total before shipping
+        var check_total = subtotal + salestax;
+
+        // Compute Shipping cost
+        var shipping_costs = (total_quantity < 4) ? 30*total_quantity : (total_quantity < 11) ? 25*total_quantity : 15*total_quantity;
+
+        // compute grand total
+        var grand_total = check_total + shipping_costs;
+        invoice_str += `<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+        <tr><td class="text-right"><strong>Subtotal</strong><td>&nbsp;</td></td><td>&nbsp;</td><td><strong>$${subtotal.toFixed(2)}</strong></td></tr> 
+        
+        <tr><td class="text-right"><strong>HI Sales Tax @ 4.5%</strong><td>&nbsp;</td></td><td>&nbsp;</td><td><strong>$${salestax.toFixed(2)}</strong></td></tr> 
+
+        <tr><td class="text-right"><strong>Shipping</strong><td>&nbsp;</td></td><td>&nbsp;</td><td><strong>$${shipping_costs.toFixed(2)}</strong></td></tr>
+
+        <tr><td class="text-right"><strong>Grand Total</strong><td>&nbsp;</td></td><td>&nbsp;</td><td><strong>$${grand_total.toFixed(2)}</strong></td></tr>
+        
+        </table>`;
 
     // taken from https://mailtrap.io/blog/nodemailer-gmail/
     // basically lets you send messages from gmail server instead of using UH's like in the example

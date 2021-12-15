@@ -13,13 +13,6 @@
             products_data = JSON.parse(response);
         });
 
-        loadJSON('get_cart', function (response) {
-            // Parsing JSON string into object
-            shopping_cart = JSON.parse(response);
-            for (pk in shopping_cart) {
-                total += shopping_cart[pk].reduce((a, b) => a + b);
-            }
-        });
         //taken from port's example
         loadJSON('get_cart', function (response) {
             cart_info = JSON.parse(response);
@@ -73,40 +66,59 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sean's Shoe Store</title>
+    <link rel="stylesheet" href="./css/product-style.css">
 </head>
 
 <body>
-    <div class="banner" style="background-color: black;">
+    <div class="top">    <div class="banner" style="background-color: black;">
         <div class="banner-center" style="background-color: black;color: mintcream;">
             <h1>Sean's Shoe Store</h1>
         </div>
-        <div class="banner-right" style="color: mintcream;">
-            ☰<a href="./cart.html">View Cart</a>
+        <div class="banner-down" style="color: mintcream;">
+            <h2>
+                <script>document.write(products_key + ' shoes')</script>
+            </h2>
         </div>
     </div>
-    <script>nav_bar(products_key, products_data);</script>
-    <br>
-    <script>
-        // This is to print out whether the user can log in or not
-        // If there is no username in the session, we generate a log in button
-        // If there IS a username, I want to display the username and a logout button
-        // Now I should also implement a way to show number of items in the cart but maybe later
-        if (typeof user_name == 'undefined'){
-            document.write(`<div id="login_box">
-                Hey You havn't logged in yet <br> <a href="./login.html?products_key=jordan"> Login Here</a>
-                </div>`)
-        } else {
-            document.write(`<div id="login_box">
-                Hey ${user_name} <br> <a href="/logout"> Logout</a>
-                </div>`)
-        }
-    </script>
+    <div class="navbar">
+        <script>
+            // Got info on how to make horizontal navbar here https://www.w3schools.com/Css/css_navbar_horizontal.asp
+        </script>
+        <ul>
+            <li><a href="./index.html">Home</a></li>
+            <li class="dropdown">
+                <a href="javascript:void(0)" class="dropbtn">Brands</a>
+                <div class="dropdown-content">
+                  <a href="products_display.html?products_key=jordan">Jordan</a>
+                  <a href="products_display.html?products_key=nike">Nike</a>
+                  <a href="products_display.html?products_key=yeezy">Yeezy</a>
+                  <a href="products_display.html?products_key=adidas">Adidas</a>
+                </div>
+              </li>
+            <li style="float:right">
+                <script>
+                    // This is to print out whether the user can log in or not
+                    // If there is no username in the session, we generate a log in button
+                    // If there IS a username, I want to display the username and a logout button
+                    // Now I should also implement a way to show number of items in the cart but maybe later
+                    if (typeof user_name == 'undefined'){
+                        document.write(`
+                        <a class="active" href="./login.html?products_key=jordan"> Login Here</a>`)
+                    } else {
+                        document.write(`
+                        <a class="active" href="/logout">Hey ${user_name}, Logout?</a>`)
+                    }
+                </script>
+            </li>
+            <li style="float:right"><a class="active" href="./cart.html">Cart (<script>document.write(total)</script>)</a></li>
+          </ul> 
+    </div></div>
 
-    <div class="title">
-        <h2>
-            <script>document.write(products_key + ' shoes')</script>
-        </h2>
-    </div>
+    <script>
+    // doing this just incase I decide to use this but not really aesthetically pleasing
+    // nav_bar(products_key, products_data);
+    </script>
+    <br>
     <script>
         // This function will just display the product based on the key string in the query and show the correpsonding product - based on the brand
         var display_str = ``;
@@ -114,11 +126,11 @@
         products = products_data[products_key];
         // now to generate display divs
         // start with the form so it isn't being generated
-        display_str += `<div class="items" style="display: inline;"><form action="/add_to_cart" method="POST"><input type="hidden" name="products_key" value="${products_key}">`;
+        display_str += `<div class="items" ><form action="/add_to_cart" id="form1" method="POST"><input type="hidden" name="products_key" value="${products_key}">`;
         for (i = 0; i < products.length; i++) {
             display_str += `
             
-                <div class="item-box" style="width: 500px;">
+                <div class="item-box">
                     <div class="product-info">
                         <img src=${products[i]['image']}>
                     <h3>${products[i]['name']}</h3>
@@ -132,11 +144,13 @@
                 
             `;
         };
-        display_str += `<input type="submit" class="button" value="Add to Cart" name="submit"></form></div>`;
+        display_str += `</form></div>`;
         // Now to show display_str
         document.write(display_str);
     </script>
-
+    <br>
+    <div class="butt"><button type="submit" form="form1">Add to Cart</button></div>
+    
 </body>
 <script>
     // These functions are needed in order to check the inputs on product display page

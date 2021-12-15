@@ -16,13 +16,46 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sean's Shoe Store</title>
+    <link rel="stylesheet" href="./css/index-style.css">
 </head>
 
 <body>
     <h1>Sean's Shoe Store</h1>
-    <h2>Find all the coolest sneakers here!</h2>
-    <h2>What brand are you looking for?</h2><br>
-<script> nav_bar(this_product_key, products_data);</script>
+    <h2>Find the freshest kicks here by selecting a brand below!</h2>
+<script> 
+// Doing this just incase I use the navbar
+// nav_bar(this_product_key, products_data);
+</script>
+<div class="container">
+    <div class="row">
+        <div class="image">
+            <h3>Jordan</h3>
+            <a href="products_display.html?products_key=jordan">
+                <img src="./images/logo0.png">
+            </a>
+        </div>
+        <div class="image">
+            <h3>Nike</h3>
+            <a href="products_display.html?products_key=nike">
+                <img src="./images/logo1.png">
+            </a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="image">
+            <h3>Yeezy</h3>
+            <a href="products_display.html?products_key=yeezy">
+                <img src="./images/logo2.png">
+            </a>
+        </div>
+        <div class="image">
+            <h3>Adidas</h3>
+            <a href="products_display.html?products_key=adidas">
+                <img src="./images/logo3.png">
+            </a>
+        </div>
+    </div>
+</div>
 </body>
 
 </html>

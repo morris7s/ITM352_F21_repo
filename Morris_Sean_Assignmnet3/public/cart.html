@@ -14,7 +14,6 @@
             // Parsing JSON string into object
             products_data = JSON.parse(response);
         });
-        nav_bar('', products_data);
 
         loadJSON('get_cart', function (response) {
             cart_info = JSON.parse(response);
@@ -27,13 +26,57 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shopping Cart</title>
+    <link rel="stylesheet" href="./css/cart-style.css">
 </head>
 
 <body>
-    <h2>Shopping Cart:</h2>
-    <h2>You have <span id="cart_total">0</span> items in your shopping cart</h2>
+    <div class="top">    <div class="banner" style="background-color: black;">
+        <div class="banner-center" style="background-color: black;color: mintcream;">
+            <h1>Sean's Shoe Store</h1>
+        </div>
+        <div class="banner-down" style="color: mintcream;">
+            <h2>Shopping Cart</h2>
+        </div>
+    </div>
+    <div class="navbar">
+        <script>
+            // Got info on how to make horizontal navbar here https://www.w3schools.com/Css/css_navbar_horizontal.asp
+        </script>
+        <ul>
+            <li><a href="./index.html">Home</a></li>
+            <li class="dropdown">
+                <a href="javascript:void(0)" class="dropbtn">Brands</a>
+                <div class="dropdown-content">
+                  <a href="products_display.html?products_key=jordan">Jordan</a>
+                  <a href="products_display.html?products_key=nike">Nike</a>
+                  <a href="products_display.html?products_key=yeezy">Yeezy</a>
+                  <a href="products_display.html?products_key=adidas">Adidas</a>
+                </div>
+              </li>
+            <li style="float:right">
+                <script>
+                    // This is to print out whether the user can log in or not
+                    // If there is no username in the session, we generate a log in button
+                    // If there IS a username, I want to display the username and a logout button
+                    // Now I should also implement a way to show number of items in the cart but maybe later
+                    if (typeof user_name == 'undefined'){
+                        document.write(`
+                        <a class="active" href="./login.html?products_key=jordan"> Login Here</a>`)
+                    } else {
+                        document.write(`
+                        <a class="active" href="/logout">Hey ${user_name}, Logout?</a>`)
+                    }
+                </script>
+            </li>
+            <li style="float:right"><a class="active" href="./cart.html">Cart (<script>document.write(total)</script>)</a></li>
+          </ul> 
+    </div></div>
+    <div class="main">
+        <div class="main2">
+            <h2>You have <span id="cart_total">0</span> items in your shopping cart:</h2>
     <script>cart_total.innerHTML = total;</script>
-    <br>
+    <br></div>
+
 
     <script>
         // this is to create the rows for the purchased products and their quantities, I am thinking of just providing the sub-total and not the entire invoice because this si just a cart
@@ -102,13 +145,13 @@
         var salestax = tax_rate * subtotal;
 
         // Compute total before shipping
-        var total = subtotal + salestax;
+        var pretotal = subtotal + salestax;
 
         // Compute Shipping cost
         var shipping_costs = (total_quantity < 4) ? 30*total_quantity : (total_quantity < 11) ? 25*total_quantity : 15*total_quantity;
 
         // compute grand total
-        var grand_total = total + shipping_costs;
+        var grand_total = pretotal + shipping_costs;
 
 
         // from here, if there is nothing in the cart, it will tell the user theres 0 items and a link to get back to the home page
@@ -133,15 +176,16 @@
     </script>
     
     <br>
-    <input type="submit" name="update_cart_button" value="Update Cart">
+    <input type="submit" class="submit" name="update_cart_button" value="Update Cart">
     </form>
     <br>
     <div class="ship_box"><h3>Shipping rate: <br>A Purchase of 3 shoes or less is $30/shoe<br>
         A Purchase of 10 shoes or less is $25/shoe<br>
         Orders with 11 or more shoes is $15/shoe</h3></div>
-
-    <form action="./cart_checkout" method="post">
-        <input type="submit" id="checkout_button" value="Proceed to Checkout">
+<script>
+    document.write(`<form action="./cart_checkout?total=${total}" method="post">`);
+</script>
+        <input type="submit" class="submit1" id="checkout_button" value="Proceed to Checkout">
     </form>
     <div class="error_box">
         <script>
@@ -151,6 +195,8 @@
         }
         </script>
     </div>
+    </div>
+    
     
 </body>
 
