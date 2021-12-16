@@ -1,15 +1,14 @@
 <script>
-    /* 
-    Author: Sean Morris
-    Date: 1 December 2021
-    */
-</script>
-<script>
-    /* 
+/* 
+Author: Sean Morris
+Date: 15 December 2021
+Desc.:
+    This is my invoice page. This looks very similar to my assignment 2 invoice page. The only differences are that it displays the user's username and email. I also had to modify this page to use sessions for finding the quantity data instead of looking at the query string.
+P.S.:
     Template for this invoice can be found at https://www.fundaofwebit.com/index.php/post/how-to-create-html-invoice-template-design-using-html-css
     The rest of the data comes from my previous invoice
     Just kind of put the important data stuff into this template and made it look nice as possible
-    */
+*/
 </script>
 <script src="./functions.js"></script>
 <script src="/session_data.js"></script>
@@ -151,8 +150,10 @@
         <div class="body-section1">
             <p>&copy; Copyright 2021 - Author: Sean Morris 
                 <a href="mailto:morriss7@hawaii.edu">morriss7@hawaii.edu</a>
-                <input type="button" class="button" style="float: right;" value="Back to Home" onclick="window.location.href = 'index.html';">
-                <form action="./exitinvoice"></form>
+
+                <form action="./exitinvoice" method="post">
+                    <input type="submit" class="button" style="float: right;" value="Back to Home">
+                </form>
             </p>
         </div>      
     </div>      

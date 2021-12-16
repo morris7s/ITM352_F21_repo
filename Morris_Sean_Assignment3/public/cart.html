@@ -1,9 +1,13 @@
 <script>
-    // Taken from Port's cart example assignment 3
+/* 
+Author: Sean Morris
+Date: 15 December 2021
+Desc.:
+    This is my shooping cart page. A lot of the inspiration for this page came from Port's assignment 3 code examples and from classmate Brandon Marcos. This page allows users to view whats in their cart and even allows you to edit the number of items here as well. From here, users can update their cart, or proceed to checkout if they're happy with their items and grand total.  
+*/
 </script>
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <script src="./functions.js"></script>
     <script src="/session_data.js"></script>
@@ -181,11 +185,13 @@
     <br>
     <div class="ship_box"><h3>Shipping rate: <br>A Purchase of 3 shoes or less is $30/shoe<br>
         A Purchase of 10 shoes or less is $25/shoe<br>
-        Orders with 11 or more shoes is $15/shoe</h3></div>
+        Orders with 11 or more shoes is $15/shoe<br><br>Ready to Checkout?</h3>
+        
+    </div>
 <script>
     document.write(`<form action="./cart_checkout?total=${total}" method="post">`);
 </script>
-        <input type="submit" class="submit1" id="checkout_button" value="Proceed to Checkout">
+        <input type="submit" class="submit1" id="checkout_button" value="Checkout">
     </form>
     <div class="error_box">
         <script>

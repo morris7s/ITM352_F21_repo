@@ -1,4 +1,5 @@
-// Code below taken from Assignmnet 3 code examples
+// Gonna do a small description here
+// This was taken from Port's Assignmnet 3 code examples and honeslty I only use this only function
 // This function asks the server for a "service" and converts the response to text. 
 function loadJSON(service, callback) {   
     var xobj = new XMLHttpRequest();
@@ -12,13 +13,3 @@ function loadJSON(service, callback) {
     };
     xobj.send(null);  
  }
-
-// This function makes a navigation bar from a products_data object
-
-function nav_bar(this_product_key, products_data) {
-    // This makes a navigation bar to other product pages
-    for (let products_key in products_data) {
-        if (products_key == this_product_key) continue;
-        document.write(`<div class="navbar"><a href='./products_display.html?products_key=${products_key}'>${products_key}<a>&nbsp&nbsp&nbsp;</div>`);
-    }
-}

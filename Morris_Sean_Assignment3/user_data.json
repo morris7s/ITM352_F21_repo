@@ -1,1 +1,17 @@
-{"dport":{"name":"Dan Port","password":"portspassword","email":"dport@hawaii.edu"},"itm352":{"name":"Grader Last","password":"grader","email":"grader@hawaii.edu"},"theboymako":{"password":"password","email":"morriss7@hawaii.edu","name":"Sean Morris"},"eeeeeee":{"password":"qqqqqqq","email":"qwe@email.com","name":"ee"},"wwwwwww":{"password":"qqqqqqq","email":"morriss7@hawaii.edu","name":"qqqqqq"}}
+{
+    "dport": {
+        "name": "Dan Port",
+        "password": "portspassword",
+        "email": "dport@hawaii.edu"
+    },
+    "itm352": {
+        "name": "Jane Doe",
+        "password": "grader",
+        "email": "grader@hawaii.edu"
+    },
+    "theboymako": {
+        "password": "password",
+        "email": "morriss7@hawaii.edu",
+        "name": "Sean Morris"
+    }
+}

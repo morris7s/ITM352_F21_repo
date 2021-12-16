@@ -1,3 +1,21 @@
+/* 
+Author: Sean Morris
+Date: 15 December 2021
+Desc.:
+    This is my server. It handles all requests on port 8080.
+    Some major features includes:
+    Displaying 4 different brands of products 
+    The ability to add product quantities to a cart that's stored in the session data
+    Track who logged in/registered
+    Able to modify quantities of a product in the cart itself
+    Server checks for a username to see if the user has logged in or not
+    Might've forgot some stuff but my video should show that...
+P.S.:
+    Most of the code here came from my server.js in assignment 2
+    Only modified it to work with sessions and cookies
+    Along with the addition of a cart page, and the required checks for user data
+    Need to mention that classmate Brandon Marcos was a source of inspiration for some of the code here
+*/
 console.log(`you can do it`);
 var express = require('express');
 var app = express();
@@ -306,6 +324,8 @@ app.post("/cart_update", function (request, response, next) {
 })
 
 // This is used to process the checkout
+// this will also remove the quantities selected from the products_data
+// then will redirect user to invoice
 app.post("/cart_checkout", function (request, response) {
     // gotta check if there is a username in the session
     // if there isn't a username, just redirect to the cart page with an error
@@ -315,8 +335,26 @@ app.post("/cart_checkout", function (request, response) {
         response.redirect('/cart.html?NotLoggedIn');
     } else {
     console.log(`found a username`);
+
+    // gonna do the remove items from the quantity availablke here because it makes more sense to do so than after the invoive is generated
+    // gonna try the edit cart stuff here
+    // inspiration from Brandon Marcose
+    // This will define the cart
+    // get the quantities for the individual product in the brand list
+    // then takes those quantities and removes them from the quantity available data
+    var last_cart = request.session.cart;
+    for (product_key in products_data) {
+        for ( i = 0; i < products_data[product_key].length; i++) {
+            // from here, if the brand is not a part of the cart, it'll just continue and update any that do
+            if (typeof last_cart[product_key] == 'undefined') continue;{
+                var last_qty = last_cart[product_key][i];
+                products_data[product_key][i]['quantity_available'] -= last_qty;
+            }
+        }
+    };
+
     // Generate HTML invoice string
-    var invoice_str = `Thank you for your order!<br><table border="2px">
+    var invoice_str = `<span style="display: flex; font-size: large; color: black; justify-content: center; text-align: center;">Thank you for your order ${request.session.full_name}!<br>Happy Holidays!</span><br><table border="2px">
     <thead>
         <th>
             Shoe
@@ -417,6 +455,16 @@ app.post("/cart_checkout", function (request, response) {
       });
     };
 
+})
+
+// this is used to get the user back to the homepage after the invoice
+// this just redirects to index and deletes the items in the cart
+// I should try get the items in the cart and remove them from the server but seems kinda hard
+app.post("/exitinvoice", function (request, response) {
+    console.log('got the exit');
+    request.session.cart = {};
+    console.log(request.session.cart);
+    response.redirect('./index.html');
 })
 
 app.use(express.static('./public'));
